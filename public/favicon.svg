@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <defs>
-    <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#3b82f6"/>
       <stop offset="100%" stop-color="#6366f1"/>
     </linearGradient>
   </defs>
-  <rect x="2" y="5" width="28" height="18" rx="5" fill="#1f1f23" stroke="url(#fg)" stroke-width="1.5"/>
-  <polygon points="2,23 9,30 9,23" fill="#1f1f23" stroke="url(#fg)" stroke-width="1.5"/>
-  <polygon points="12,11 23,16 12,21" fill="url(#fg)"/>
+  <!-- Rounded square background with gradient -->
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+  <!-- Bold white football silhouette -->
+  <g transform="translate(16,16)">
+    <circle cx="0" cy="0" r="9.5" stroke="white" stroke-width="2.2" fill="none"/>
+    <polygon points="0,-6 4.5,-2 3,4 -3,4 -4.5,-2" fill="white"/>
+  </g>
 </svg>
