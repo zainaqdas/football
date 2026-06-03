@@ -2,16 +2,20 @@
 import Layout from '../layouts/Layout.astro';
 import EventCard from '../components/EventCard.astro';
 import { TVTVHDScraper } from '../../scraper/src/index.js';
+import { withCache } from '../lib/cache.ts';
 
 const scraper = new TVTVHDScraper();
 
+const CHANNELS_TTL = 30_000; // 30 seconds
+const EVENTS_TTL = 60_000;   // 60 seconds
+
 let allEvents, eventStats, allChannels;
 try {
-  [allEvents, eventStats, allChannels] = await Promise.all([
-    scraper.getAllEvents(),
-    scraper.getEventStats(),
-    scraper.getAllChannels(),
+  [allEvents, eventStats] = await Promise.all([
+    withCache('events.all', EVENTS_TTL, () => scraper.getAllEvents()),
+    withCache('events.stats', EVENTS_TTL, () => scraper.getEventStats()),
   ]);
+  allChannels = await withCache('channels.all', CHANNELS_TTL, () => scraper.getAllChannels());
 } catch {
   allEvents = [];
   eventStats = { totalEvents: 0, uniqueCountries: [], eventsByCountry: [] };

@@ -1,5 +1,8 @@
 import type { APIRoute } from 'astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
+import { withCache } from '../../../src/lib/cache.ts';
+
+const CACHE_TTL = 60_000; // 60 seconds for event data
 
 export const GET: APIRoute = async ({ url }) => {
   const scraper = new TVTVHDScraper();
@@ -7,17 +10,17 @@ export const GET: APIRoute = async ({ url }) => {
   const country = url.searchParams.get('country');
 
   try {
-    let events;
-    
-    if (date) {
-      events = await scraper.getEventsByDate(date);
-    } else if (country) {
-      events = await scraper.getEventsByCountry(country);
-    } else {
-      events = await scraper.getAllEvents();
-    }
+    const allEvents = await withCache('events.all', CACHE_TTL, () => scraper.getAllEvents());
+    const stats = await withCache('events.stats', CACHE_TTL, () => scraper.getEventStats());
 
-    const stats = await scraper.getEventStats();
+    let events = allEvents;
+
+    if (date) {
+      events = allEvents.filter((e: any) => e.date === date);
+    } else if (country) {
+      const q = country.toLowerCase();
+      events = allEvents.filter((e: any) => e.country?.name?.toLowerCase() === q);
+    }
 
     return new Response(JSON.stringify({
       events,

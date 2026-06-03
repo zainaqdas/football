@@ -2,22 +2,30 @@
 import Layout from '../../layouts/Layout.astro';
 import VideoPlayer from '../../components/VideoPlayer.astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
+import { withCache } from '../../lib/cache.ts';
 
 const { id } = Astro.params;
 const scraper = new TVTVHDScraper();
+
+const CHANNELS_TTL = 30_000; // 30 seconds
+const STREAM_TTL = 10_000;   // 10 seconds
 
 let channel = null;
 let streamInfo = null;
 
 try {
-  const allChannels = await scraper.getAllChannels();
-  channel = allChannels.find(ch => {
+  const allChannels = await withCache('channels.all', CHANNELS_TTL, () => scraper.getAllChannels());
+  channel = allChannels.find((ch: any) => {
     const streamId = ch.streamUrl?.split('stream=')[1]?.split('&')[0];
     return streamId === id || ch.streamUrl?.includes(id || '');
   });
 
   if (channel) {
-    streamInfo = await scraper.getStreamInfo(channel.streamUrl);
+    streamInfo = await withCache(
+      `stream.${channel.streamUrl}`,
+      STREAM_TTL,
+      () => scraper.getStreamInfo(channel.streamUrl),
+    );
   }
 } catch {
   // Handle errors gracefully

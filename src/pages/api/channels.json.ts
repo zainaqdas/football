@@ -1,5 +1,8 @@
 import type { APIRoute } from 'astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
+import { withCache } from '../../../src/lib/cache.ts';
+
+const CACHE_TTL = 30_000; // 30 seconds for channel data
 
 export const GET: APIRoute = async ({ url }) => {
   const scraper = new TVTVHDScraper();
@@ -8,27 +11,34 @@ export const GET: APIRoute = async ({ url }) => {
   const active = url.searchParams.get('active');
 
   try {
-    let channels;
-    
+    // Cache the full channel list and stats, then filter in memory
+    const allChannels = await withCache('channels.all', CACHE_TTL, () => scraper.getAllChannels());
+    const stats = await withCache('channels.stats', CACHE_TTL, () => scraper.getChannelStats());
+
+    let channels = allChannels;
+
     if (category) {
-      channels = await scraper.getChannelsByCategoryName(category);
-      if (!channels) {
+      const normalized = category.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      channels = allChannels.filter((c: any) =>
+        c.category.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === normalized
+      );
+      if (channels.length === 0) {
         return new Response(JSON.stringify({ error: 'Category not found' }), {
           status: 404,
           headers: { 'Content-Type': 'application/json' },
         });
       }
     } else if (search) {
-      channels = await scraper.searchChannels(search);
-    } else {
-      channels = await scraper.getAllChannels();
+      const q = search.toLowerCase();
+      channels = allChannels.filter((c: any) =>
+        c.name.toLowerCase().includes(q) ||
+        c.category.toLowerCase().includes(q)
+      );
     }
 
     if (active === 'true') {
       channels = channels.filter((c: any) => c.isActive);
     }
-
-    const stats = await scraper.getChannelStats();
 
     return new Response(JSON.stringify({
       channels,

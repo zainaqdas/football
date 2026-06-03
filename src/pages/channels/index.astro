@@ -4,8 +4,11 @@ import ChannelCard from '../../components/ChannelCard.astro';
 import NavTabs from '../../components/NavTabs.astro';
 import SearchBar from '../../components/SearchBar.astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
+import { withCache } from '../../lib/cache.ts';
 
 const scraper = new TVTVHDScraper();
+
+const CACHE_TTL = 30_000; // 30 seconds
 
 const url = new URL(Astro.request.url);
 const searchQuery = url.searchParams.get('q') || '';
@@ -14,9 +17,9 @@ const activeCategory = url.searchParams.get('category') || '';
 let allChannels, categories, channelStats;
 try {
   [allChannels, categories, channelStats] = await Promise.all([
-    scraper.getAllChannels(),
-    scraper.getCategories(),
-    scraper.getChannelStats(),
+    withCache('channels.all', CACHE_TTL, () => scraper.getAllChannels()),
+    withCache('channels.categories', CACHE_TTL, () => scraper.getCategories()),
+    withCache('channels.stats', CACHE_TTL, () => scraper.getChannelStats()),
   ]);
 } catch (e) {
   allChannels = [];

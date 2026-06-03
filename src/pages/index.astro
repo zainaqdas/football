@@ -7,14 +7,21 @@ import { TVTVHDScraper } from '../../scraper/src/index.js';
 
 const scraper = new TVTVHDScraper();
 
+import { withCache } from '../lib/cache.ts';
+
+const CHANNELS_TTL = 30_000; // 30 seconds
+const EVENTS_TTL = 60_000;   // 60 seconds
+
 let channelStats, categories, allChannels, todayEvents, activeChannels, eventStats;
 try {
-  [channelStats, categories, allChannels, todayEvents, eventStats] = await Promise.all([
-    scraper.getChannelStats(),
-    scraper.getCategories(),
-    scraper.getAllChannels(),
-    scraper.getTodaysEvents(),
-    scraper.getEventStats(),
+  [allChannels, categories, channelStats] = await Promise.all([
+    withCache('channels.all', CHANNELS_TTL, () => scraper.getAllChannels()),
+    withCache('channels.categories', CHANNELS_TTL, () => scraper.getCategories()),
+    withCache('channels.stats', CHANNELS_TTL, () => scraper.getChannelStats()),
+  ]);
+  [todayEvents, eventStats] = await Promise.all([
+    withCache('events.today', EVENTS_TTL, () => scraper.getTodaysEvents()),
+    withCache('events.stats', EVENTS_TTL, () => scraper.getEventStats()),
   ]);
 } catch (e) {
   channelStats = { totalChannels: 0, totalActive: 0, totalInactive: 0, totalCategories: 0, categories: [] };

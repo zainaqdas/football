@@ -1,5 +1,9 @@
 import type { APIRoute } from 'astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
+import { withCache } from '../../../src/lib/cache.ts';
+
+const CHANNELS_TTL = 30_000; // 30 seconds
+const STREAM_TTL = 10_000;    // 10 seconds (streams change frequently)
 
 export const GET: APIRoute = async ({ url }) => {
   const streamId = url.searchParams.get('stream');
@@ -13,8 +17,8 @@ export const GET: APIRoute = async ({ url }) => {
   const scraper = new TVTVHDScraper();
 
   try {
-    const allChannels = await scraper.getAllChannels();
-    const channel = allChannels.find(ch => {
+    const allChannels = await withCache('channels.all', CHANNELS_TTL, () => scraper.getAllChannels());
+    const channel = allChannels.find((ch: any) => {
       const sid = ch.streamUrl?.split('stream=')[1]?.split('&')[0];
       return sid === streamId;
     });
@@ -26,7 +30,11 @@ export const GET: APIRoute = async ({ url }) => {
       });
     }
 
-    const streamInfo = await scraper.getStreamInfo(channel.streamUrl);
+    const streamInfo = await withCache(
+      `stream.${channel.streamUrl}`,
+      STREAM_TTL,
+      () => scraper.getStreamInfo(channel.streamUrl),
+    );
     const hlsUrl = streamInfo?.hlsStreams?.[0] || null;
 
     return new Response(JSON.stringify({
