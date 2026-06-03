@@ -23,7 +23,8 @@ try {
   // Handle errors gracefully
 }
 
-const streamId = id;
+// Get the HLS stream URL to play via hls.js proxy
+const hlsUrl = streamInfo?.hlsStreams?.[0] || null;
 
 const title = channel ? `${channel.name} — En Vivo — Fútbol Libre TV` : 'Canal no encontrado — Fútbol Libre TV';
 const description = channel
@@ -52,7 +53,7 @@ const description = channel
             <!-- Main content -->
             <div class="lg:col-span-2">
               <VideoPlayer
-                streamId={streamId}
+                hlsUrl={hlsUrl}
                 channelName={channel.name}
               />
 
@@ -76,13 +77,13 @@ const description = channel
                   </div>
                 </div>
 
-                {streamInfo && (
+                {streamInfo && hlsUrl && (
                   <div class="mt-6 p-4 bg-green-50 border border-green-100 rounded-lg">
                     <div class="flex items-center gap-2 text-sm text-green-800">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
-                      <span class="font-medium">Stream incrustado vía iframe</span>
+                      <span class="font-medium">Stream en reproducción directa</span>
                       <span class="text-green-600 text-xs ml-auto">Reproducción en vivo</span>
                     </div>
                   </div>
@@ -151,10 +152,10 @@ const description = channel
                     <span class="text-mute">Protocolo</span>
                     <span class="font-mono text-xs text-ink">HLS</span>
                   </div>
-                  {streamId && (
+                  {hlsUrl && (
                     <div class="flex justify-between text-sm">
                       <span class="text-mute">Reproducción</span>
-                      <span class="font-mono text-xs text-green-600">Incrustada</span>
+                      <span class="font-mono text-xs text-green-600">Directa</span>
                     </div>
                   )}
                   {streamInfo && (

@@ -1,27 +1,70 @@
 ---
 export interface Props {
-  streamId?: string;
+  hlsUrl?: string;
   channelName?: string;
   class?: string;
 }
 
-const { streamId, channelName = 'Stream', class: className = '' } = Astro.props;
-const iframeUrl = streamId
-  ? `https://tvtvhd.com/vivo/canales.php?stream=${encodeURIComponent(streamId)}`
-  : null;
+const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
+const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` : null;
 ---
 
 <div class={`relative bg-black rounded-xl overflow-hidden ${className}`}>
-  {iframeUrl ? (
-    <iframe
-      src={iframeUrl}
-      class="w-full aspect-video"
-      allowfullscreen
-      allow="autoplay; encrypted-media; picture-in-picture"
-      referrerpolicy="no-referrer-when-downgrade"
-      loading="eager"
-      style="border: 0;"
-    />
+  {hlsUrl && proxiedUrl ? (
+    <>
+      <video
+        class="w-full aspect-video hls-player"
+        data-proxied-url={proxiedUrl}
+        controls
+        playsinline
+        preload="metadata"
+      >
+        <p>Tu navegador no soporta la reproducción de video.</p>
+      </video>
+
+      <script src="/hls.min.js" is:inline></script>
+      <script is:inline>
+        document.addEventListener('DOMContentLoaded', function () {
+          var video = document.querySelector('.hls-player[data-proxied-url]');
+          if (!video) return;
+          var url = video.getAttribute('data-proxied-url');
+          if (!url) return;
+
+          if (window.Hls && window.Hls.isSupported()) {
+            var hls = new window.Hls({
+              enableWorker: false,
+              lowLatencyMode: true,
+              liveSyncDurationCount: 1,
+              liveMaxLatencyDurationCount: 2,
+              backbufferLength: 15,
+            });
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
+              video.play()['catch'](function () {});
+            });
+            hls.on(window.Hls.Events.ERROR, function (_event, data) {
+              if (data.fatal) {
+                if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
+                  console.warn('HLS network error, reloading...');
+                  hls.startLoad();
+                } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
+                  console.warn('HLS media error, recovering...');
+                  hls.recoverMediaError();
+                }
+              }
+            });
+            window.addEventListener('beforeunload', function () { hls.destroy(); });
+            window.addEventListener('pagehide', function () { hls.destroy(); });
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+            video.addEventListener('loadedmetadata', function () {
+              video.play()['catch'](function () {});
+            });
+          }
+        });
+      </script>
+    </>
   ) : (
     <div class="w-full aspect-video bg-ink flex items-center justify-center">
       <div class="text-center px-4">
@@ -31,7 +74,7 @@ const iframeUrl = streamId
           </svg>
         </div>
         <p class="text-white/60 text-sm">Stream no disponible</p>
-        <p class="text-white/40 text-xs mt-1">No hay una fuente disponible para este canal.</p>
+        <p class="text-white/40 text-xs mt-1">No hay una fuente de video disponible para este canal.</p>
       </div>
     </div>
   )}

@@ -202,9 +202,12 @@ const sortedDates = Object.keys(eventsByDate).sort();
   </div>
 </div>
 
+<script src="/hls.min.js" is:inline></script>
 <script is:inline>
   (function () {
-    window.openEventPlayer = function (streamId, channelName, category, embedUrl) {
+    var currentHls = null;
+
+    window.openEventPlayer = async function (streamId, channelName, category) {
       var modal = document.getElementById('event-player-modal');
       var title = document.getElementById('player-title');
       var subtitle = document.getElementById('player-subtitle');
@@ -213,27 +216,80 @@ const sortedDates = Object.keys(eventsByDate).sort();
 
       if (!modal || !container) return;
 
-      // Determine the iframe source
-      var iframeSrc = embedUrl;
-      if (!iframeSrc && streamId) {
-        iframeSrc = 'https://tvtvhd.com/vivo/canales.php?stream=' + encodeURIComponent(streamId);
-      }
-
-      // Show modal
+      // Show modal with loading state
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-      title.textContent = channelName || 'Stream';
+      title.textContent = 'Cargando ' + (channelName || 'stream') + '...';
       subtitle.textContent = category || '';
-      fullLink.style.display = embedUrl ? 'none' : '';
-      if (streamId) {
-        fullLink.href = '/stream/' + streamId;
-        fullLink.style.display = '';
+      fullLink.style.display = 'none';
+
+      container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Cargando stream...</p></div>';
+
+      // Destroy previous HLS instance
+      if (currentHls) {
+        currentHls.destroy();
+        currentHls = null;
       }
 
-      if (iframeSrc) {
-        container.innerHTML = '<iframe src="' + iframeSrc.replace(/"/g, '&quot;') + '" class="w-full h-full" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="no-referrer-when-downgrade" style="border: 0;"></iframe>';
-      } else {
-        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">No hay stream disponible.</p></div>';
+      try {
+        var res = await fetch('/api/stream-hls.json?stream=' + encodeURIComponent(streamId));
+        var data = await res.json();
+
+        if (!data.hlsUrl) {
+          container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">No hay stream disponible para este canal.</p></div>';
+          title.textContent = channelName || 'Stream no disponible';
+          return;
+        }
+
+        title.textContent = data.channelName || channelName;
+        subtitle.textContent = data.category || category || '';
+        fullLink.href = '/stream/' + streamId;
+        fullLink.style.display = '';
+
+        var video = document.createElement('video');
+        video.className = 'w-full h-full';
+        video.controls = true;
+        video.playsinline = true;
+        video.preload = 'metadata';
+        video.autoplay = true;
+        container.innerHTML = '';
+        container.appendChild(video);
+
+        var proxiedUrl = '/api/hls-proxy?url=' + encodeURIComponent(data.hlsUrl);
+
+        if (window.Hls && window.Hls.isSupported()) {
+          currentHls = new window.Hls({
+            enableWorker: false,
+            lowLatencyMode: true,
+            liveSyncDurationCount: 1,
+            liveMaxLatencyDurationCount: 2,
+            backbufferLength: 15,
+          });
+          currentHls.loadSource(proxiedUrl);
+          currentHls.attachMedia(video);
+          currentHls.on(window.Hls.Events.MANIFEST_PARSED, function () {
+            video.play()['catch'](function () {});
+          });
+          currentHls.on(window.Hls.Events.ERROR, function (_e, ev) {
+            if (ev.fatal) {
+              if (ev.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
+                currentHls.startLoad();
+              } else if (ev.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
+                currentHls.recoverMediaError();
+              }
+            }
+          });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = proxiedUrl;
+          video.addEventListener('loadedmetadata', function () {
+            video.play()['catch'](function () {});
+          });
+        } else {
+          container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Este navegador no soporta HLS.</p></div>';
+        }
+      } catch (e) {
+        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Error al cargar el stream.</p></div>';
+        title.textContent = channelName || 'Error';
       }
     };
 
@@ -242,13 +298,18 @@ const sortedDates = Object.keys(eventsByDate).sort();
       if (modal) modal.classList.add('hidden');
       document.body.style.overflow = '';
 
+      if (currentHls) {
+        currentHls.destroy();
+        currentHls = null;
+      }
+
       var container = document.getElementById('player-container');
       if (container) {
         container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Selecciona un stream para reproducir</p></div>';
       }
     };
 
-    // Intercept embed clicks to open modal with iframe instead of navigating
+    // Intercept embed clicks to open modal player
     document.addEventListener('click', function (e) {
       var badge = e.target.closest('[data-stream-id]');
       if (badge) {
@@ -256,9 +317,8 @@ const sortedDates = Object.keys(eventsByDate).sort();
         var streamId = badge.getAttribute('data-stream-id');
         var channelName = badge.getAttribute('data-channel-name');
         var category = badge.getAttribute('data-category');
-        var embedUrl = badge.getAttribute('data-embed-url');
-        if (streamId || embedUrl) {
-          window.openEventPlayer(streamId, channelName, category, embedUrl);
+        if (streamId) {
+          window.openEventPlayer(streamId, channelName, category);
         }
       }
     });
