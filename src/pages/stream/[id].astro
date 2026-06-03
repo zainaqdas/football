@@ -32,13 +32,13 @@ try {
 }
 
 
-const title = channel ? `${channel.name} — Live — Gol HD` : 'Channel not found — Gol HD';
+const title = channel ? `${channel.name} — Ver en Vivo Online HD — Gol HD` : 'Canal no encontrado — Gol HD';
 const description = channel
-  ? `Watch ${channel.name} live on Gol HD. Stream from ${channel.category} in HD quality.`
-  : 'The requested channel is not available.';
+  ? `Mira ${channel.name} en vivo online HD en Gol HD. Disfruta de ${channel.category} en streaming de deportes en vivo gratis desde cualquier dispositivo.`
+  : 'El canal que buscas no está disponible actualmente en Gol HD.';
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} canonical={channel ? `https://golhd.tv/stream/${id}` : 'https://golhd.tv/'}>
   
   <section class="bg-canvas min-h-[calc(100vh-4rem)]">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
