@@ -16,6 +16,9 @@ const delay = index * 60;
 
 <a
   href={`/stream/${streamId}`}
+  data-stream-id={streamId}
+  data-channel-name={name}
+  data-category={category}
   class="group block bg-canvas rounded-lg card-hairline p-5 no-underline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated"
   style={`animation-delay: ${delay}ms`}
 >

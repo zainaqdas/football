@@ -139,6 +139,41 @@ const siteSchema = JSON.stringify({
       <slot />
     </main>
 
+    <!-- Video Player Modal (shared across all pages) -->
+    <div id="event-player-modal" class="fixed inset-0 z-50 hidden">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-ink/80 backdrop-blur-sm" onclick="closeEventPlayer()"></div>
+      <!-- Modal content -->
+      <div class="relative z-10 flex items-center justify-center h-full p-4">
+        <div class="w-full max-w-4xl bg-canvas rounded-xl overflow-hidden shadow-modal">
+          <!-- Header -->
+          <div class="flex items-center justify-between px-5 py-4 border-b border-hairline">
+            <div class="flex-1 min-w-0">
+              <h3 id="player-title" class="text-sm font-semibold text-ink truncate">Loading...</h3>
+              <p id="player-subtitle" class="text-xs text-mute font-mono truncate"></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <a id="player-full-link" href="#" target="_blank" class="text-xs font-medium text-link no-underline hover:underline hidden sm:inline">
+                Fullscreen
+              </a>
+              <button onclick="closeEventPlayer()" class="flex items-center justify-center w-8 h-8 rounded-full border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-colors cursor-pointer" aria-label="Close">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- Player container -->
+          <div id="player-container" class="bg-black aspect-video flex items-center justify-center">
+            <div class="text-center">
+              <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <p class="text-white/50 text-sm">Select a stream to play</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="border-t border-hairline" style="background: #0d0d10;">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
@@ -219,6 +254,67 @@ const siteSchema = JSON.stringify({
       window.addEventListener('resize', function() {
         if (window.innerWidth >= 768) {
           window.closeMenu();
+        }
+      });
+
+      // Video player modal
+      window.openEventPlayer = function (streamId, channelName, category) {
+        var modal = document.getElementById('event-player-modal');
+        var title = document.getElementById('player-title');
+        var subtitle = document.getElementById('player-subtitle');
+        var container = document.getElementById('player-container');
+        var fullLink = document.getElementById('player-full-link');
+
+        if (!modal || !container) return;
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        title.textContent = channelName || 'Stream';
+        subtitle.textContent = category || '';
+        fullLink.href = '/stream/' + streamId;
+        fullLink.style.display = '';
+
+        var iframeUrl = 'https://tvtvhd.com/vivo/canales.php?stream=' + encodeURIComponent(streamId);
+
+        container.innerHTML = '';
+
+        var iframe = document.createElement('iframe');
+        iframe.src = iframeUrl;
+        iframe.className = 'absolute inset-0 w-full h-full';
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('allow', 'encrypted-media; autoplay');
+        iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock');
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'relative w-full aspect-video bg-black';
+        wrapper.appendChild(iframe);
+
+        container.appendChild(wrapper);
+      };
+
+      window.closeEventPlayer = function () {
+        var modal = document.getElementById('event-player-modal');
+        if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = '';
+
+        var container = document.getElementById('player-container');
+        if (container) {
+          container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Select a stream to play</p></div>';
+        }
+      };
+
+      // Intercept clicks on any element with data-stream-id (EventCard, ChannelCard, etc.)
+      document.addEventListener('click', function (e) {
+        var badge = e.target.closest('[data-stream-id]');
+        if (badge) {
+          e.preventDefault();
+          var streamId = badge.getAttribute('data-stream-id');
+          var channelName = badge.getAttribute('data-channel-name');
+          var category = badge.getAttribute('data-category');
+          if (streamId) {
+            window.openEventPlayer(streamId, channelName, category);
+          }
         }
       });
     </script>
