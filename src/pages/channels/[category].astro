@@ -64,7 +64,7 @@ const hasChannels = channels && channels.length > 0;
               <span class="text-body">{activeCount} activos</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-gray-300" />
+              <span class="w-2 h-2 rounded-full bg-white/20" />
               <span class="text-body">{inactiveCount} inactivos</span>
             </div>
             <div class="text-mute font-mono text-xs ml-auto">
@@ -119,7 +119,7 @@ const hasChannels = channels && channels.length > 0;
           </div>
           <h3 class="text-lg font-semibold text-ink mb-2">Categoría no encontrada</h3>
           <p class="text-sm text-mute mb-6">La categoría "{originalName}" no existe o no tiene canales disponibles.</p>
-          <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
+          <a href="/channels" class="btn-primary" style="height: 2.5rem; padding: 0 1.5rem; font-size: 0.875rem;">
             Explorar canales
           </a>
         </div>

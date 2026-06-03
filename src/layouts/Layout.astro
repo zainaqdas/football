@@ -17,7 +17,7 @@ const { title = 'Gol HD — Live Sports Channels & Football Matches', descriptio
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#09090b" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -50,10 +50,10 @@ const { title = 'Gol HD — Live Sports Channels & Football Matches', descriptio
   </head>
   <body class="min-h-screen bg-canvas-soft text-ink antialiased">
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-canvas/80 backdrop-blur-md border-b border-hairline">
+    <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-canvas/80 backdrop-blur-md border-b border-hairline" style="background: rgba(24, 24, 27, 0.85);">
       <div class="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a href="/" class="flex items-center gap-2 no-underline group">
-          <img src="/logo.svg" alt="Gol HD" class="h-7 w-auto" />
+          <img src="/logo.svg" alt="Gol HD" class="h-6 w-auto" />
         </a>
 
         <!-- Desktop nav -->
@@ -65,13 +65,13 @@ const { title = 'Gol HD — Live Sports Channels & Football Matches', descriptio
 
         <!-- Desktop right side -->
         <div class="hidden md:flex items-center gap-2">
-          <a href="/channels" class="inline-flex items-center h-7 px-3 bg-ink text-white text-sm font-medium rounded-sm no-underline hover:bg-ink/90 transition-colors">
+          <a href="/channels" class="btn-primary" style="height: 2rem; padding: 0 1rem; font-size: 0.8125rem;">
             Watch Live
           </a>
         </div>
 
         <!-- Mobile hamburger -->
-        <button id="menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-full border border-hairline bg-canvas text-ink cursor-pointer hover:bg-canvas-soft transition-colors" aria-label="Toggle menu" aria-expanded="false">
+        <button id="menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-full border border-hairline bg-canvas text-ink cursor-pointer hover:bg-white/10 transition-colors" aria-label="Toggle menu" aria-expanded="false">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <line x1="3" y1="6" x2="21" y2="6"/>
             <line x1="3" y1="12" x2="21" y2="12"/>
@@ -82,12 +82,12 @@ const { title = 'Gol HD — Live Sports Channels & Football Matches', descriptio
     </nav>
 
     <!-- Mobile menu overlay -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 hidden bg-canvas/98 backdrop-blur-sm">
+    <div id="mobile-menu" class="fixed inset-0 z-40 hidden bg-canvas-soft/98 backdrop-blur-lg">
       <div class="flex flex-col items-center justify-center h-full gap-8">
-        <a href="/" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Home</a>
-        <a href="/channels" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Channels</a>
-        <a href="/events" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Events</a>
-        <a href="/channels" class="mt-4 inline-flex items-center h-10 px-6 bg-ink text-white text-base font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
+        <a href="/" class="text-2xl font-semibold no-underline text-white hover:text-body transition-colors" onclick="closeMenu()">Home</a>
+        <a href="/channels" class="text-2xl font-semibold no-underline text-white hover:text-body transition-colors" onclick="closeMenu()">Channels</a>
+        <a href="/events" class="text-2xl font-semibold no-underline text-white hover:text-body transition-colors" onclick="closeMenu()">Events</a>
+        <a href="/channels" class="btn-primary mt-4" style="height: 2.5rem; padding: 0 1.5rem;" onclick="closeMenu()">
           Watch Live
         </a>
         <button id="menu-close" class="mt-8 text-sm text-mute hover:text-body transition-colors cursor-pointer bg-transparent border-none" onclick="closeMenu()">Close</button>
@@ -100,47 +100,47 @@ const { title = 'Gol HD — Live Sports Channels & Football Matches', descriptio
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-hairline bg-canvas">
+    <footer class="border-t border-hairline" style="background: #0d0d10;">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Navigation</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4" style="color: #52525b;">Navigation</h4>
             <ul class="space-y-3">
-              <li><a href="/" class="text-sm text-body no-underline hover:text-ink transition-colors">Home</a></li>
-              <li><a href="/channels" class="text-sm text-body no-underline hover:text-ink transition-colors">Channels</a></li>
-              <li><a href="/events" class="text-sm text-body no-underline hover:text-ink transition-colors">Events</a></li>
+              <li><a href="/" class="text-sm text-body no-underline hover:text-white transition-colors">Home</a></li>
+              <li><a href="/channels" class="text-sm text-body no-underline hover:text-white transition-colors">Channels</a></li>
+              <li><a href="/events" class="text-sm text-body no-underline hover:text-white transition-colors">Events</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Channels</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4" style="color: #52525b;">Channels</h4>
             <ul class="space-y-3">
-              <li><a href="/channels/argentina" class="text-sm text-body no-underline hover:text-ink transition-colors">Argentina</a></li>
-              <li><a href="/channels/mexico" class="text-sm text-body no-underline hover:text-ink transition-colors">Mexico</a></li>
-              <li><a href="/channels/espana" class="text-sm text-body no-underline hover:text-ink transition-colors">Spain</a></li>
-              <li><a href="/channels/usa" class="text-sm text-body no-underline hover:text-ink transition-colors">USA</a></li>
+              <li><a href="/channels/argentina" class="text-sm text-body no-underline hover:text-white transition-colors">Argentina</a></li>
+              <li><a href="/channels/mexico" class="text-sm text-body no-underline hover:text-white transition-colors">Mexico</a></li>
+              <li><a href="/channels/espana" class="text-sm text-body no-underline hover:text-white transition-colors">Spain</a></li>
+              <li><a href="/channels/usa" class="text-sm text-body no-underline hover:text-white transition-colors">USA</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Regions</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4" style="color: #52525b;">Regions</h4>
             <ul class="space-y-3">
-              <li><a href="/channels/latinoamerica" class="text-sm text-body no-underline hover:text-ink transition-colors">Latin America</a></li>
-              <li><a href="/channels/brasil" class="text-sm text-body no-underline hover:text-ink transition-colors">Brazil</a></li>
-              <li><a href="/channels/portugal" class="text-sm text-body no-underline hover:text-ink transition-colors">Portugal</a></li>
-              <li><a href="/channels/mundo" class="text-sm text-body no-underline hover:text-ink transition-colors">World</a></li>
+              <li><a href="/channels/latinoamerica" class="text-sm text-body no-underline hover:text-white transition-colors">Latin America</a></li>
+              <li><a href="/channels/brasil" class="text-sm text-body no-underline hover:text-white transition-colors">Brazil</a></li>
+              <li><a href="/channels/portugal" class="text-sm text-body no-underline hover:text-white transition-colors">Portugal</a></li>
+              <li><a href="/channels/mundo" class="text-sm text-body no-underline hover:text-white transition-colors">World</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Info</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4" style="color: #52525b;">Info</h4>
             <ul class="space-y-3">
               <li><span class="text-sm font-semibold text-ink">Gol HD</span></li>
-              <li><span class="text-sm text-mute">Live sports channels & matches</span></li>
-              <li><span class="text-sm text-mute">HD quality streaming</span></li>
+              <li><span class="text-sm text-body">Live sports channels & matches</span></li>
+              <li><span class="text-sm text-body">HD quality streaming</span></li>
             </ul>
           </div>
         </div>
         <div class="mt-12 pt-8 border-t border-hairline flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p class="text-sm text-mute">&copy; {new Date().getFullYear()} Gol HD. All rights reserved.</p>
-          <p class="text-xs text-mute font-mono">golhd.tv</p>
+          <p class="text-sm text-mute" style="color: #52525b;">&copy; {new Date().getFullYear()} Gol HD. All rights reserved.</p>
+          <p class="text-xs font-mono" style="color: #3f3f46;">golhd.tv</p>
         </div>
       </div>
     </footer>

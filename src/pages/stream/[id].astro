@@ -70,11 +70,11 @@ const description = channel
                     <div class="flex items-center gap-3 mb-2">
                       <h1 class="text-2xl font-semibold text-ink tracking-[-0.6px]">{channel.name}</h1>
                       {channel.isActive ? (
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-green-50 text-green-700 text-xs font-mono font-medium rounded-full">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-green-500/10 text-green-400 text-xs font-mono font-medium rounded-full">
                           <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />Live
                         </span>
                       ) : (
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-gray-50 text-gray-400 text-xs font-mono font-medium rounded-full">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-white/5 text-mute text-xs font-mono font-medium rounded-full">
                           <span class="w-1.5 h-1.5 rounded-full bg-gray-300" />Inactive
                         </span>
                       )}
@@ -133,7 +133,7 @@ const description = channel
                   </div>
                   <div class="flex justify-between text-sm">
                     <span class="text-mute">Status</span>
-                    <span class={`font-medium ${channel.isActive ? 'text-green-600' : 'text-mute'}`}>
+                    <span class={`font-medium ${channel.isActive ? 'text-green-400' : 'text-mute'}`}
                       {channel.isActive ? 'Live' : 'Inactive'}
                     </span>
                   </div>
@@ -181,7 +181,7 @@ const description = channel
           </div>
           <h3 class="text-lg font-semibold text-ink mb-2">Channel not found</h3>
           <p class="text-sm text-mute mb-6">The channel you're looking for is not available or doesn't exist.</p>
-          <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
+          <a href="/channels" class="btn-primary" style="height: 2.5rem; padding: 0 1.5rem; font-size: 0.875rem;">
             Browse Channels
           </a>
         </div>
