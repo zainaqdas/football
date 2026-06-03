@@ -202,118 +202,115 @@ const sortedDates = Object.keys(eventsByDate).sort();
   </div>
 </div>
 
-<script>
-  import Hls from 'hls.js';
+<script src="/hls.min.js" is:inline></script>
+<script is:inline>
+  (function () {
+    var currentHls = null;
 
-  let currentHls = null;
+    window.openEventPlayer = async function (streamId, channelName, category) {
+      var modal = document.getElementById('event-player-modal');
+      var title = document.getElementById('player-title');
+      var subtitle = document.getElementById('player-subtitle');
+      var container = document.getElementById('player-container');
+      var fullLink = document.getElementById('player-full-link');
 
-  window.openEventPlayer = async function(streamId, channelName, category) {
-    const modal = document.getElementById('event-player-modal');
-    const title = document.getElementById('player-title');
-    const subtitle = document.getElementById('player-subtitle');
-    const container = document.getElementById('player-container');
-    const fullLink = document.getElementById('player-full-link');
+      if (!modal || !container) return;
 
-    if (!modal || !container) return;
+      // Show modal with loading state
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      title.textContent = 'Cargando ' + (channelName || 'stream') + '...';
+      subtitle.textContent = category || '';
+      fullLink.style.display = 'none';
 
-    // Show modal with loading state
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    title.textContent = 'Cargando ' + (channelName || 'stream') + '...';
-    subtitle.textContent = category || '';
-    fullLink.style.display = 'none';
+      container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Cargando stream...</p></div>';
 
-    // Show loading in container
-    container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Cargando stream...</p></div>';
-
-    // Destroy previous HLS instance
-    if (currentHls) {
-      currentHls.destroy();
-      currentHls = null;
-    }
-
-    try {
-      // Fetch HLS URL from our API
-      const res = await fetch('/api/stream-hls.json?stream=' + encodeURIComponent(streamId));
-      const data = await res.json();
-
-      if (!data.hlsUrl) {
-        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">No hay stream disponible para este canal.</p></div>';
-        title.textContent = channelName || 'Stream no disponible';
-        return;
+      if (currentHls) {
+        currentHls.destroy();
+        currentHls = null;
       }
 
-      title.textContent = data.channelName || channelName;
-      subtitle.textContent = data.category || category || '';
-      fullLink.href = '/stream/' + streamId;
-      fullLink.style.display = '';
+      try {
+        var res = await fetch('/api/stream-hls.json?stream=' + encodeURIComponent(streamId));
+        var data = await res.json();
 
-      // Create video element
-      const video = document.createElement('video');
-      video.className = 'w-full h-full';
-      video.controls = true;
-      video.playsinline = true;
-      video.preload = 'metadata';
-      video.autoplay = true;
-      container.innerHTML = '';
-      container.appendChild(video);
+        if (!data.hlsUrl) {
+          container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">No hay stream disponible para este canal.</p></div>';
+          title.textContent = channelName || 'Stream no disponible';
+          return;
+        }
 
-      // Initialize HLS with proxied URL (to pass Referer check)
-      const proxiedUrl = '/api/hls-proxy?url=' + encodeURIComponent(data.hlsUrl);
+        title.textContent = data.channelName || channelName;
+        subtitle.textContent = data.category || category || '';
+        fullLink.href = '/stream/' + streamId;
+        fullLink.style.display = '';
 
-      if (Hls.isSupported()) {
-        currentHls = new Hls({ enableWorker: false, lowLatencyMode: true, backbufferLength: 30 });
-        currentHls.loadSource(proxiedUrl);
-        currentHls.attachMedia(video);
-        currentHls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.play().catch(() => {});
-        });
-        currentHls.on(Hls.Events.ERROR, (_e, ev) => {
-          if (ev.fatal) {
-            if (ev.type === Hls.ErrorTypes.NETWORK_ERROR) currentHls.startLoad();
-            else if (ev.type === Hls.ErrorTypes.MEDIA_ERROR) currentHls.recoverMediaError();
-          }
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = proxiedUrl;
-        video.addEventListener('loadedmetadata', () => video.play().catch(() => {}));
-      } else {
-        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Este navegador no soporta HLS.</p></div>';
+        var video = document.createElement('video');
+        video.className = 'w-full h-full';
+        video.controls = true;
+        video.playsinline = true;
+        video.preload = 'metadata';
+        video.autoplay = true;
+        container.innerHTML = '';
+        container.appendChild(video);
+
+        var proxiedUrl = '/api/hls-proxy?url=' + encodeURIComponent(data.hlsUrl);
+
+        if (window.Hls && window.Hls.isSupported()) {
+          currentHls = new window.Hls({ enableWorker: false, lowLatencyMode: true, backbufferLength: 30 });
+          currentHls.loadSource(proxiedUrl);
+          currentHls.attachMedia(video);
+          currentHls.on(window.Hls.Events.MANIFEST_PARSED, function () {
+            video.play()['catch'](function () {});
+          });
+          currentHls.on(window.Hls.Events.ERROR, function (_e, ev) {
+            if (ev.fatal) {
+              if (ev.type === window.Hls.ErrorTypes.NETWORK_ERROR) currentHls.startLoad();
+              else if (ev.type === window.Hls.ErrorTypes.MEDIA_ERROR) currentHls.recoverMediaError();
+            }
+          });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = proxiedUrl;
+          video.addEventListener('loadedmetadata', function () {
+            video.play()['catch'](function () {});
+          });
+        } else {
+          container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Este navegador no soporta HLS.</p></div>';
+        }
+      } catch (e) {
+        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Error al cargar el stream.</p></div>';
+        title.textContent = channelName || 'Error';
       }
-    } catch (e) {
-      container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Error al cargar el stream.</p></div>';
-      title.textContent = channelName || 'Error';
-    }
-  };
+    };
 
-  window.closeEventPlayer = function() {
-    const modal = document.getElementById('event-player-modal');
-    if (modal) modal.classList.add('hidden');
-    document.body.style.overflow = '';
+    window.closeEventPlayer = function () {
+      var modal = document.getElementById('event-player-modal');
+      if (modal) modal.classList.add('hidden');
+      document.body.style.overflow = '';
 
-    if (currentHls) {
-      currentHls.destroy();
-      currentHls = null;
-    }
-
-    // Clear player
-    const container = document.getElementById('player-container');
-    if (container) {
-      container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Selecciona un stream para reproducir</p></div>';
-    }
-  };
-
-  // Intercept embed clicks to open modal instead of navigating
-  document.addEventListener('click', function(e) {
-    const badge = e.target.closest('[data-stream-id]');
-    if (badge) {
-      e.preventDefault();
-      const streamId = badge.getAttribute('data-stream-id');
-      const channelName = badge.getAttribute('data-channel-name');
-      const category = badge.getAttribute('data-category');
-      if (streamId) {
-        window.openEventPlayer(streamId, channelName, category);
+      if (currentHls) {
+        currentHls.destroy();
+        currentHls = null;
       }
-    }
-  });
+
+      var container = document.getElementById('player-container');
+      if (container) {
+        container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Selecciona un stream para reproducir</p></div>';
+      }
+    };
+
+    // Intercept embed clicks to open modal instead of navigating
+    document.addEventListener('click', function (e) {
+      var badge = e.target.closest('[data-stream-id]');
+      if (badge) {
+        e.preventDefault();
+        var streamId = badge.getAttribute('data-stream-id');
+        var channelName = badge.getAttribute('data-channel-name');
+        var category = badge.getAttribute('data-category');
+        if (streamId) {
+          window.openEventPlayer(streamId, channelName, category);
+        }
+      }
+    });
+  })();
 </script>

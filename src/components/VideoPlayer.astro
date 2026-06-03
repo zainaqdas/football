@@ -6,9 +6,6 @@ export interface Props {
 }
 
 const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
-const playerId = `player-${Math.random().toString(36).slice(2, 8)}`;
-
-// Convert direct HLS URL to proxied URL via our API
 const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` : null;
 ---
 
@@ -16,8 +13,8 @@ const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` :
   {hlsUrl && proxiedUrl ? (
     <>
       <video
-        id={playerId}
-        class="w-full aspect-video"
+        class="w-full aspect-video hls-player"
+        data-proxied-url={proxiedUrl}
         controls
         playsinline
         preload="metadata"
@@ -25,38 +22,43 @@ const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` :
         <p>Tu navegador no soporta la reproducción de video.</p>
       </video>
 
-      <script define:vars={{ proxiedUrl, playerId }}>
-        import Hls from 'hls.js';
+      <script src="/hls.min.js" is:inline></script>
+      <script is:inline>
+        document.addEventListener('DOMContentLoaded', function () {
+          var video = document.querySelector('.hls-player[data-proxied-url]');
+          if (!video) return;
+          var url = video.getAttribute('data-proxied-url');
+          if (!url) return;
 
-        const video = document.getElementById(playerId);
-        if (video && proxiedUrl) {
-          if (Hls.isSupported()) {
-            const hls = new Hls({
+          if (window.Hls && window.Hls.isSupported()) {
+            var hls = new window.Hls({
               enableWorker: false,
               lowLatencyMode: true,
               backbufferLength: 30,
             });
-            hls.loadSource(proxiedUrl);
+            hls.loadSource(url);
             hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-              video.play().catch(() => {});
+            hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
+              video.play()['catch'](function () {});
             });
-            hls.on(Hls.Events.ERROR, (_event, data) => {
+            hls.on(window.Hls.Events.ERROR, function (_event, data) {
               if (data.fatal) {
-                if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
                   hls.startLoad();
-                } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
                   hls.recoverMediaError();
                 }
               }
             });
-            window.addEventListener('beforeunload', () => hls.destroy());
-            window.addEventListener('pagehide', () => hls.destroy());
+            window.addEventListener('beforeunload', function () { hls.destroy(); });
+            window.addEventListener('pagehide', function () { hls.destroy(); });
           } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = proxiedUrl;
-            video.addEventListener('loadedmetadata', () => video.play().catch(() => {}));
+            video.src = url;
+            video.addEventListener('loadedmetadata', function () {
+              video.play()['catch'](function () {});
+            });
           }
-        }
+        });
       </script>
     </>
   ) : (
