@@ -8,7 +8,7 @@ const { id } = Astro.params;
 const scraper = new TVTVHDScraper();
 
 const CHANNELS_TTL = 30_000; // 30 seconds
-const STREAM_TTL = 300_000;  // 5 minutes (HLS tokens last ~5 hours)
+const STREAM_TTL = 3_600_000; // 60 minutes (HLS tokens last ~5 hours)
 
 let channel = null;
 let streamInfo = null;
