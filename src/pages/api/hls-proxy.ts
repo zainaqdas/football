@@ -63,12 +63,15 @@ export const GET: APIRoute = async ({ url }) => {
     }
 
     // For segments and other binary content: proxy directly with CORS headers
+    // s-maxage tells Vercel's CDN edge to cache the segment, dramatically reducing
+    // bandwidth when multiple users watch the same channel.
+    // Live segments are only in the rolling window for ~120s, so max-age=120 is ideal.
     return new Response(body, {
       headers: {
         'Content-Type': contentType || 'application/octet-stream',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Expose-Headers': 'Content-Length, Content-Range',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=120, s-maxage=120, stale-while-revalidate=60',
       },
     });
 
