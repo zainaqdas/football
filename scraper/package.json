@@ -1,0 +1,19 @@
+{
+  "name": "tvtvhd-scraper",
+  "version": "1.0.0",
+  "description": "Node.js scraper API for tvtvhd.com - extracts channels, streams, events, and schedule data",
+  "main": "src/index.js",
+  "bin": {
+    "tvtvhd-scraper": "./cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node cli.js",
+    "channels": "node cli.js channels",
+    "events": "node cli.js events",
+    "all": "node cli.js all"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
