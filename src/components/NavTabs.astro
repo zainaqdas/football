@@ -1,0 +1,33 @@
+---
+export interface Props {
+  items: { label: string; href: string; active?: boolean; count?: number }[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+---
+
+<div class={`flex flex-wrap gap-2 ${className}`}>
+  {items.map((item) => (
+    <a
+      href={item.href}
+      class={item.active
+        ? 'inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-ink bg-canvas rounded-pill-sm card-hairline no-underline transition-all hover:shadow-elevated'
+        : 'inline-flex items-center gap-1.5 px-4 py-1.5 text-sm text-body no-underline rounded-pill-sm hover:text-ink hover:bg-canvas transition-all'
+      }
+    >
+      {item.label}
+      {item.count !== undefined && (
+        <span class={`text-xs font-mono ${item.active ? 'text-mute' : 'text-mute'}`}>
+          {item.count}
+        </span>
+      )}
+    </a>
+  ))}
+</div>
+
+<style is:global>
+  .rounded-pill-sm {
+    border-radius: 64px;
+  }
+</style>
