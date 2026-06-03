@@ -115,6 +115,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 </div>
 
 <script src="/hls.min.js" is:inline></script>
+<script src="https://cdn.jsdelivr.net/npm/@swarmcloud/hls@2.18.0/p2p-engine.min.js" is:inline></script>
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function () {
     // Find all player containers
@@ -155,6 +156,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
       };
 
       var hls = null;
+      var p2pEngine = null;
       var isPlaying = false;
       var controlsTimeout = null;
       var isSeeking = false;
@@ -225,7 +227,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
         }
       }
 
-      // ─── Initialize HLS ───
+      // ─── Initialize HLS with P2P ───
       function initPlayer(url) {
         if (window.Hls && window.Hls.isSupported()) {
           hls = new window.Hls({
@@ -237,6 +239,17 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
           });
           hls.loadSource(url);
           hls.attachMedia(video);
+
+          // Wrap with SwarmCloud P2P engine (reduces bandwidth by sharing segments peer-to-peer)
+          if (window.P2PEngineHls) {
+            try {
+              p2pEngine = new window.P2PEngineHls({
+                hlsjsInstance: hls,
+              });
+            } catch (e) {
+              console.warn('P2P engine init failed, falling back to regular HLS:', e);
+            }
+          }
           hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
             controls.loadingSpinner.classList.add('hidden');
             video.play()['catch'](function () {});
@@ -377,6 +390,10 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
       controls.retryBtn.addEventListener('click', function () {
         controls.errorOverlay.classList.add('hidden');
         controls.loadingSpinner.classList.remove('hidden');
+        if (p2pEngine) {
+          try { p2pEngine.destroy(); } catch (e) {}
+          p2pEngine = null;
+        }
         if (hls) {
           hls.destroy();
           hls = null;
@@ -396,8 +413,15 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
       });
 
       // ─── Cleanup ───
-      window.addEventListener('beforeunload', function () { if (hls) hls.destroy(); });
-      window.addEventListener('pagehide', function () { if (hls) hls.destroy(); });
+      function destroyPlayer() {
+        if (p2pEngine) {
+          try { p2pEngine.destroy(); } catch (e) {}
+          p2pEngine = null;
+        }
+        if (hls) { hls.destroy(); hls = null; }
+      }
+      window.addEventListener('beforeunload', destroyPlayer);
+      window.addEventListener('pagehide', destroyPlayer);
 
       // ─── Start ───
       initPlayer(proxiedUrl);

@@ -207,6 +207,7 @@ const sortedDates = Object.keys(eventsByDate).sort();
 </div>
 
 <script src="/hls.min.js" is:inline></script>
+<script src="https://cdn.jsdelivr.net/npm/@swarmcloud/hls@2.18.0/p2p-engine.min.js" is:inline></script>
 <script is:inline>
   // Shared custom player initializer for modal players
   function setupModalPlayer(container, modalContainer) {
@@ -243,6 +244,7 @@ const sortedDates = Object.keys(eventsByDate).sort();
     };
 
     var hls = null;
+    var p2pEngine = null;
     var isPlaying = false;
     var controlsTimeout = null;
     var isSeeking = false;
@@ -303,6 +305,15 @@ const sortedDates = Object.keys(eventsByDate).sort();
         hls = new window.Hls({ enableWorker: false, lowLatencyMode: true, liveSyncDurationCount: 1, liveMaxLatencyDurationCount: 2, backbufferLength: 15 });
         hls.loadSource(url);
         hls.attachMedia(video);
+
+        // Wrap with SwarmCloud P2P engine (reduces bandwidth by sharing segments peer-to-peer)
+        if (window.P2PEngineHls) {
+          try {
+            p2pEngine = new window.P2PEngineHls({ hlsjsInstance: hls });
+          } catch (e) {
+            console.warn('P2P engine init failed, falling back to regular HLS:', e);
+          }
+        }
         hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
           c.loadingSpinner.classList.add('hidden');
           video.play()['catch'](function () {});
@@ -382,11 +393,12 @@ const sortedDates = Object.keys(eventsByDate).sort();
     c.retryBtn.addEventListener('click', function () {
       c.errorOverlay.classList.add('hidden');
       c.loadingSpinner.classList.remove('hidden');
+      if (p2pEngine) { try { p2pEngine.destroy(); } catch (e) {} p2pEngine = null; }
       if (hls) { hls.destroy(); hls = null; }
       initHls(proxiedUrl);
     });
 
-    if (modalContainer) modalContainer._hlsRef = { destroy: function () { if (hls) { hls.destroy(); hls = null; } } };
+    if (modalContainer) modalContainer._hlsRef = { destroy: function () { if (p2pEngine) { try { p2pEngine.destroy(); } catch (e) {} p2pEngine = null; } if (hls) { hls.destroy(); hls = null; } } };
 
     initHls(proxiedUrl);
     updateVolumeUI();
