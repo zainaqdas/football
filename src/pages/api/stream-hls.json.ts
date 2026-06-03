@@ -3,7 +3,7 @@ import { TVTVHDScraper } from '../../../scraper/src/index.js';
 import { withCache } from '../../../src/lib/cache.ts';
 
 const CHANNELS_TTL = 30_000; // 30 seconds
-const STREAM_TTL = 10_000;    // 10 seconds (streams change frequently)
+const STREAM_TTL = 300_000;   // 5 minutes (HLS tokens last ~5 hours)
 
 export const GET: APIRoute = async ({ url }) => {
   const streamId = url.searchParams.get('stream');
