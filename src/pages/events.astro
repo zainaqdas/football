@@ -258,10 +258,12 @@ const sortedDates = Object.keys(eventsByDate).sort();
       container.innerHTML = '';
       container.appendChild(video);
 
-      // Initialize HLS
+      // Initialize HLS with proxied URL (to pass Referer check)
+      const proxiedUrl = '/api/hls-proxy?url=' + encodeURIComponent(data.hlsUrl);
+
       if (Hls.isSupported()) {
         currentHls = new Hls({ enableWorker: false, lowLatencyMode: true, backbufferLength: 30 });
-        currentHls.loadSource(data.hlsUrl);
+        currentHls.loadSource(proxiedUrl);
         currentHls.attachMedia(video);
         currentHls.on(Hls.Events.MANIFEST_PARSED, () => {
           video.play().catch(() => {});
@@ -273,7 +275,7 @@ const sortedDates = Object.keys(eventsByDate).sort();
           }
         });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = data.hlsUrl;
+        video.src = proxiedUrl;
         video.addEventListener('loadedmetadata', () => video.play().catch(() => {}));
       } else {
         container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Este navegador no soporta HLS.</p></div>';

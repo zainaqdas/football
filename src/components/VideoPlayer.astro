@@ -7,14 +7,16 @@ export interface Props {
 
 const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
 const playerId = `player-${Math.random().toString(36).slice(2, 8)}`;
+
+// Convert direct HLS URL to proxied URL via our API
+const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` : null;
 ---
 
 <div class={`relative bg-black rounded-xl overflow-hidden ${className}`}>
-  {hlsUrl ? (
+  {hlsUrl && proxiedUrl ? (
     <>
       <video
         id={playerId}
-        data-hls-url={hlsUrl}
         class="w-full aspect-video"
         controls
         playsinline
@@ -23,19 +25,18 @@ const playerId = `player-${Math.random().toString(36).slice(2, 8)}`;
         <p>Tu navegador no soporta la reproducción de video.</p>
       </video>
 
-      <script>
+      <script define:vars={{ proxiedUrl, playerId }}>
         import Hls from 'hls.js';
 
-        const video = document.getElementById('{playerId}');
-        if (video) {
-          const streamUrl = video.getAttribute('data-hls-url');
-          if (streamUrl && Hls.isSupported()) {
+        const video = document.getElementById(playerId);
+        if (video && proxiedUrl) {
+          if (Hls.isSupported()) {
             const hls = new Hls({
               enableWorker: false,
               lowLatencyMode: true,
               backbufferLength: 30,
             });
-            hls.loadSource(streamUrl);
+            hls.loadSource(proxiedUrl);
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
               video.play().catch(() => {});
@@ -51,8 +52,8 @@ const playerId = `player-${Math.random().toString(36).slice(2, 8)}`;
             });
             window.addEventListener('beforeunload', () => hls.destroy());
             window.addEventListener('pagehide', () => hls.destroy());
-          } else if (streamUrl && video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = streamUrl;
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = proxiedUrl;
             video.addEventListener('loadedmetadata', () => video.play().catch(() => {}));
           }
         }
