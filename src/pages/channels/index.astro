@@ -4,6 +4,10 @@ import ChannelCard from '../../components/ChannelCard.astro';
 import NavTabs from '../../components/NavTabs.astro';
 import SearchBar from '../../components/SearchBar.astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
+import { getTranslations, detectLocale } from '../../i18n/index.ts';
+
+const locale = detectLocale(Astro.cookies, Astro.request.headers.get('accept-language'));
+const { t } = await getTranslations(locale);
 
 const scraper = new TVTVHDScraper();
 
@@ -52,8 +56,8 @@ filtered.sort((a, b) => {
 });
 
 const tabItems = [
-  { label: 'All', href: '/channels', active: !activeCategory && !searchQuery, count: allChannels.length },
-  { label: 'Live', href: '/channels?category=active', active: showActive, count: channelStats.totalActive },
+  { label: t('channelsPage.all'), href: '/channels', active: !activeCategory && !searchQuery, count: allChannels.length },
+  { label: t('channelsPage.live'), href: '/channels?category=active', active: showActive, count: channelStats.totalActive },
   ...categories.map(c => ({
     label: c,
     href: `/channels?category=${c.toLowerCase()}`,
@@ -62,23 +66,25 @@ const tabItems = [
 ];
 ---
 
-<Layout title="Live Channels — Fútbol Libre TV" description="Explore all live sports channels available. Filter by region, search for your favorite channel, and enjoy HD streams.">
+<Layout title={t('channelsPage.pageTitle', { site: 'Fútbol Libre TV' })} description={t('channelsPage.pageDesc')} locale={locale}>
   
   <section class="bg-canvas border-b border-hairline">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
-          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Channels</p>
+          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">{t('channelsPage.label')}</p>
           <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-            {searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'All channels'}
+            {searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : t('channelsPage.all')}
           </h1>
           <p class="mt-1 text-sm text-body">
-            {filtered.length} channel{filtered.length !== 1 ? 's' : ''}
-            {searchQuery && ` found for "${searchQuery}"`}
+            {searchQuery
+              ? t('channelsPage.foundResults', { count: filtered.length, s: filtered.length !== 1 ? 's' : '', query: searchQuery })
+              : t('channelsPage.count', { count: filtered.length, s: filtered.length !== 1 ? 's' : '' })
+            }
           </p>
         </div>
         <div class="w-full sm:w-72">
-          <SearchBar placeholder="Search channels..." value={searchQuery} action="/channels" method="GET" />
+          <SearchBar placeholder={t('channelsPage.searchPlaceholder')} value={searchQuery} action="/channels" method="GET" />
         </div>
       </div>
     </div>
@@ -103,6 +109,7 @@ const tabItems = [
               streamUrl={ch.streamUrl}
               isActive={ch.isActive}
               index={i}
+              locale={locale}
             />
           ))}
         </div>
@@ -114,11 +121,11 @@ const tabItems = [
             </svg>
           </div>
           <h3 class="text-lg font-semibold text-ink mb-2">
-            {searchQuery ? `No channels found for "${searchQuery}"` : 'No channels in this category'}
+            {searchQuery ? t('channelsPage.notFoundTitle', { query: searchQuery }) : t('channelsPage.notFoundTitleCategory')}
           </h3>
-          <p class="text-sm text-mute mb-6">Try a different search term or browse all categories.</p>
+          <p class="text-sm text-mute mb-6">{t('channelsPage.notFoundSubtitle')}</p>
           <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
-            View all channels
+            {t('channelsPage.viewAll')}
           </a>
         </div>
       )}
