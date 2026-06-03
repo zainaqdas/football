@@ -1,24 +1,16 @@
 ---
 import '../styles/global.css';
-import { detectLocale } from '../i18n/index.ts';
 
 export interface Props {
   title?: string;
   description?: string;
-  locale?: string;
 }
 
 const { title = 'Fútbol Libre TV — Live Football Streaming', description = 'Watch live football matches from leagues around the world. Browse channels, schedules, and streams in HD quality.' } = Astro.props;
-
-// Detect locale from cookie
-const currentLocale = Astro.props.locale || detectLocale(Astro.cookies, Astro.request.headers.get('accept-language'));
-const otherLocale = currentLocale === 'es' ? 'en' : 'es';
-const langAttr = currentLocale === 'es' ? 'es' : 'en';
-const ogLocale = currentLocale === 'es' ? 'es_LA' : 'en_US';
 ---
 
 <!doctype html>
-<html lang={langAttr}>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,7 +23,7 @@ const ogLocale = currentLocale === 'es' ? 'es_LA' : 'en_US';
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -68,23 +60,15 @@ const ogLocale = currentLocale === 'es' ? 'es_LA' : 'en_US';
 
         <!-- Desktop nav -->
         <div class="hidden md:flex items-center gap-1">
-          <a href="/" class="nav-link" data-i18n="nav.home">{currentLocale === 'es' ? 'Inicio' : 'Home'}</a>
-          <a href="/channels" class="nav-link" data-i18n="nav.channels">{currentLocale === 'es' ? 'Canales' : 'Channels'}</a>
-          <a href="/events" class="nav-link" data-i18n="nav.events">{currentLocale === 'es' ? 'Eventos' : 'Events'}</a>
+          <a href="/" class="nav-link">Home</a>
+          <a href="/channels" class="nav-link">Channels</a>
+          <a href="/events" class="nav-link">Events</a>
         </div>
 
         <!-- Desktop right side -->
         <div class="hidden md:flex items-center gap-2">
-          <!-- Language switcher -->
-          <a
-            href="/api/set-lang?lang={otherLocale}&redirect={Astro.request.url}"
-            class="inline-flex items-center h-7 px-2 text-xs font-mono font-medium text-mute hover:text-ink rounded-sm no-underline hover:bg-canvas-soft border border-hairline transition-colors"
-            aria-label="Switch language"
-          >
-            {currentLocale === 'es' ? 'EN' : 'ES'}
-          </a>
-          <a href="/channels" class="inline-flex items-center h-7 px-2 bg-ink text-white text-sm font-medium rounded-sm no-underline hover:bg-ink/90 transition-colors" data-i18n="nav.watch">
-            {currentLocale === 'es' ? 'Ver Canales' : 'Watch'}
+          <a href="/channels" class="inline-flex items-center h-7 px-2 bg-ink text-white text-sm font-medium rounded-sm no-underline hover:bg-ink/90 transition-colors">
+            Watch
           </a>
         </div>
 
@@ -102,21 +86,13 @@ const ogLocale = currentLocale === 'es' ? 'es_LA' : 'en_US';
     <!-- Mobile menu overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-40 hidden bg-canvas/98 backdrop-blur-sm">
       <div class="flex flex-col items-center justify-center h-full gap-8">
-        <a href="/" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()" data-i18n="nav.home">{currentLocale === 'es' ? 'Inicio' : 'Home'}</a>
-        <a href="/channels" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()" data-i18n="nav.channels">{currentLocale === 'es' ? 'Canales' : 'Channels'}</a>
-        <a href="/events" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()" data-i18n="nav.events">{currentLocale === 'es' ? 'Eventos' : 'Events'}</a>
-        <!-- Mobile language switcher -->
-        <a
-          href="/api/set-lang?lang={otherLocale}&redirect={Astro.request.url}"
-          class="inline-flex items-center gap-2 h-10 px-6 text-sm font-mono font-medium text-mute no-underline border border-hairline rounded-pill hover:text-ink hover:bg-canvas-soft transition-colors"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          {currentLocale === 'es' ? 'English' : 'Español'}
+        <a href="/" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Home</a>
+        <a href="/channels" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Channels</a>
+        <a href="/events" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Events</a>
+        <a href="/channels" class="mt-4 inline-flex items-center h-10 px-6 bg-ink text-white text-base font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
+          Watch
         </a>
-        <a href="/channels" class="mt-4 inline-flex items-center h-10 px-6 bg-ink text-white text-base font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors" data-i18n="nav.watch">
-          {currentLocale === 'es' ? 'Ver Canales' : 'Watch'}
-        </a>
-        <button id="menu-close" class="mt-8 text-sm text-mute hover:text-body transition-colors cursor-pointer bg-transparent border-none" onclick="closeMenu()" data-i18n="nav.close">{currentLocale === 'es' ? 'Cerrar' : 'Close'}</button>
+        <button id="menu-close" class="mt-8 text-sm text-mute hover:text-body transition-colors cursor-pointer bg-transparent border-none" onclick="closeMenu()">Close</button>
       </div>
     </div>
 
@@ -130,42 +106,42 @@ const ogLocale = currentLocale === 'es' ? 'es_LA' : 'en_US';
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">{currentLocale === 'es' ? 'Navegación' : 'Navigation'}</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Navigation</h4>
             <ul class="space-y-3">
-              <li><a href="/" class="text-sm text-body no-underline hover:text-ink transition-colors" data-i18n="nav.home">{currentLocale === 'es' ? 'Inicio' : 'Home'}</a></li>
-              <li><a href="/channels" class="text-sm text-body no-underline hover:text-ink transition-colors" data-i18n="nav.channels">{currentLocale === 'es' ? 'Canales' : 'Channels'}</a></li>
-              <li><a href="/events" class="text-sm text-body no-underline hover:text-ink transition-colors" data-i18n="nav.events">{currentLocale === 'es' ? 'Eventos' : 'Events'}</a></li>
+              <li><a href="/" class="text-sm text-body no-underline hover:text-ink transition-colors">Home</a></li>
+              <li><a href="/channels" class="text-sm text-body no-underline hover:text-ink transition-colors">Channels</a></li>
+              <li><a href="/events" class="text-sm text-body no-underline hover:text-ink transition-colors">Events</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">{currentLocale === 'es' ? 'Canales' : 'Channels'}</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Channels</h4>
             <ul class="space-y-3">
-              <li><a href="/channels/argentina" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'Argentina' : 'Argentina'}</a></li>
-              <li><a href="/channels/mexico" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'México' : 'Mexico'}</a></li>
-              <li><a href="/channels/espana" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'España' : 'Spain'}</a></li>
+              <li><a href="/channels/argentina" class="text-sm text-body no-underline hover:text-ink transition-colors">Argentina</a></li>
+              <li><a href="/channels/mexico" class="text-sm text-body no-underline hover:text-ink transition-colors">Mexico</a></li>
+              <li><a href="/channels/espana" class="text-sm text-body no-underline hover:text-ink transition-colors">Spain</a></li>
               <li><a href="/channels/usa" class="text-sm text-body no-underline hover:text-ink transition-colors">USA</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">{currentLocale === 'es' ? 'Regiones' : 'Regions'}</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Regions</h4>
             <ul class="space-y-3">
-              <li><a href="/channels/latinoamerica" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'Latinoamérica' : 'Latin America'}</a></li>
-              <li><a href="/channels/brasil" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'Brasil' : 'Brazil'}</a></li>
-              <li><a href="/channels/portugal" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'Portugal' : 'Portugal'}</a></li>
-              <li><a href="/channels/mundo" class="text-sm text-body no-underline hover:text-ink transition-colors">{currentLocale === 'es' ? 'Mundo' : 'World'}</a></li>
+              <li><a href="/channels/latinoamerica" class="text-sm text-body no-underline hover:text-ink transition-colors">Latin America</a></li>
+              <li><a href="/channels/brasil" class="text-sm text-body no-underline hover:text-ink transition-colors">Brazil</a></li>
+              <li><a href="/channels/portugal" class="text-sm text-body no-underline hover:text-ink transition-colors">Portugal</a></li>
+              <li><a href="/channels/mundo" class="text-sm text-body no-underline hover:text-ink transition-colors">World</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">{currentLocale === 'es' ? 'Información' : 'Info'}</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Info</h4>
             <ul class="space-y-3">
               <li><span class="text-sm text-mute">Fútbol Libre TV</span></li>
-              <li><span class="text-sm text-mute">{currentLocale === 'es' ? 'Canales en vivo y partidos' : 'Live channels & matches'}</span></li>
-              <li><span class="text-sm text-mute">{currentLocale === 'es' ? 'Transmisiones en HD' : 'HD streaming'}</span></li>
+              <li><span class="text-sm text-mute">Live channels & matches</span></li>
+              <li><span class="text-sm text-mute">HD streaming</span></li>
             </ul>
           </div>
         </div>
         <div class="mt-12 pt-8 border-t border-hairline flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p class="text-sm text-mute">{currentLocale === 'es' ? `© ${new Date().getFullYear()} Fútbol Libre TV. Todos los derechos reservados.` : `© ${new Date().getFullYear()} Fútbol Libre TV. All rights reserved.`}</p>
+          <p class="text-sm text-mute">&copy; {new Date().getFullYear()} Fútbol Libre TV. All rights reserved.</p>
           <p class="text-xs text-mute font-mono">v1.0.0</p>
         </div>
       </div>

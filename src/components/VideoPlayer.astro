@@ -3,24 +3,16 @@ export interface Props {
   hlsUrl?: string;
   channelName?: string;
   class?: string;
-  locale?: string;
 }
 
-const { hlsUrl, channelName = 'Stream', class: className = '', locale = 'en' } = Astro.props;
+const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
 const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` : null;
 const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
-const isSpanish = locale === 'es';
-const liveText = isSpanish ? 'En Vivo' : 'Live';
-const errorText = isSpanish ? 'Error al cargar el stream' : 'Error loading stream';
-const retryText = isSpanish ? 'Reintentar' : 'Retry';
-const unavailableText = isSpanish ? 'Stream no disponible' : 'Stream unavailable';
-const unavailableSubtext = isSpanish ? 'No hay una fuente de video disponible para este canal.' : 'No video source available for this channel.';
-const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This browser does not support HLS playback.';
 ---
 
 <div class={`relative bg-black rounded-xl overflow-hidden group ${className}`}>
   {hlsUrl && proxiedUrl ? (
-    <div id={playerId} class="relative w-full aspect-video bg-black overflow-hidden" data-proxied-url={proxiedUrl} data-channel-name={channelName} data-live={liveText} data-error={errorText} data-retry={retryText} data-not-supported={notSupportedText}>
+    <div id={playerId} class="relative w-full aspect-video bg-black overflow-hidden" data-proxied-url={proxiedUrl} data-channel-name={channelName}>
       <!-- Video element (hidden default controls) -->
       <video class="w-full h-full object-contain cursor-pointer" playsinline preload="metadata"></video>
 
@@ -40,8 +32,8 @@ const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This br
       <div class="error-overlay absolute inset-0 flex items-center justify-center z-10 bg-black/60 hidden">
         <div class="text-center px-6">
           <svg class="w-10 h-10 mx-auto mb-3 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
-          <p class="text-white/80 text-sm font-medium">{errorText}</p>
-          <button class="retry-btn mt-3 px-4 py-1.5 text-xs font-medium text-white bg-white/15 hover:bg-white/25 rounded-full transition-colors cursor-pointer">{retryText}</button>
+          <p class="text-white/80 text-sm font-medium">Error loading stream</p>
+          <button class="retry-btn mt-3 px-4 py-1.5 text-xs font-medium text-white bg-white/15 hover:bg-white/25 rounded-full transition-colors cursor-pointer">Retry</button>
         </div>
       </div>
 
@@ -66,7 +58,7 @@ const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This br
           <!-- Live badge -->
           <span class="live-badge flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-semibold font-mono uppercase tracking-wider text-red-400 bg-red-500/10 rounded-full">
             <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            {liveText}
+            Live
           </span>
 
           <!-- Time -->
@@ -115,8 +107,8 @@ const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This br
             <polygon points="5 3 19 12 5 21 5 3"/>
           </svg>
         </div>
-        <p class="text-white/60 text-sm">{unavailableText}</p>
-        <p class="text-white/40 text-xs mt-1">{unavailableSubtext}</p>
+        <p class="text-white/60 text-sm">Stream unavailable</p>
+        <p class="text-white/40 text-xs mt-1">No video source available for this channel.</p>
       </div>
     </div>
   )}
@@ -132,10 +124,6 @@ const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This br
 
       var video = container.querySelector('video');
       if (!video) return;
-
-      // Get localized strings from data attributes
-      var liveText = container.getAttribute('data-live') || 'Live';
-      var notSupportedText = container.getAttribute('data-not-supported') || 'This browser does not support HLS playback.';
 
       var controls = {
         bar: container.querySelector('.controls-bar'),
@@ -165,14 +153,6 @@ const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This br
         errorOverlay: container.querySelector('.error-overlay'),
         retryBtn: container.querySelector('.retry-btn'),
       };
-
-      // Set live badge text from data attribute
-      if (controls.liveBadge) {
-        var dot = controls.liveBadge.querySelector('span');
-        controls.liveBadge.textContent = '';
-        if (dot) controls.liveBadge.appendChild(dot);
-        controls.liveBadge.appendChild(document.createTextNode(liveText));
-      }
 
       var hls = null;
       var isPlaying = false;
@@ -284,7 +264,7 @@ const notSupportedText = isSpanish ? 'Este navegador no soporta HLS.' : 'This br
           });
         } else {
           controls.loadingSpinner.classList.add('hidden');
-          controls.errorOverlay.querySelector('p').textContent = notSupportedText;
+          controls.errorOverlay.querySelector('p').textContent = 'This browser does not support HLS playback.';
           controls.errorOverlay.classList.remove('hidden');
         }
       }

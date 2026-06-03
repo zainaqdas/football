@@ -36,10 +36,6 @@
 			"dest": "_render"
 		},
 		{
-			"src": "^/api/set-lang/?$",
-			"dest": "_render"
-		},
-		{
 			"src": "^/api/stream-hls\\.json$",
 			"dest": "_render"
 		},

@@ -1,8 +1,8 @@
-import { c as createComponent } from './astro-component_D0JB_oF9.mjs';
+import { c as createComponent } from './astro-component_DJn0TBVV.mjs';
 import 'piccolore';
-import { m as maybeRenderHead, h as addAttribute, k as renderTemplate, o as renderComponent } from './entrypoint_Bkn4krmA.mjs';
-import { d as detectLocale, g as getTranslations, $ as $$Layout } from './Layout_C6jpshc_.mjs';
-import { $ as $$ChannelCard } from './ChannelCard_DFOW0Ot5.mjs';
+import { m as maybeRenderHead, h as addAttribute, k as renderTemplate, o as renderComponent } from './entrypoint_Bi04DfOe.mjs';
+import { $ as $$Layout } from './Layout_BxoymiiG.mjs';
+import { $ as $$ChannelCard } from './ChannelCard_jD4it1uo.mjs';
 import 'clsx';
 import { T as TVTVHDScraper } from './index_-JAiwH9B.mjs';
 
@@ -26,8 +26,6 @@ const $$SearchBar = createComponent(($$result, $$props, $$slots) => {
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$props, $$slots);
   Astro2.self = $$Index;
-  const locale = detectLocale(Astro2.cookies, Astro2.request.headers.get("accept-language"));
-  const { t } = await getTranslations(locale);
   const scraper = new TVTVHDScraper();
   const url = new URL(Astro2.request.url);
   const searchQuery = url.searchParams.get("q") || "";
@@ -65,15 +63,17 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
     return a.name.localeCompare(b.name);
   });
   const tabItems = [
-    { label: t("channelsPage.all"), href: "/channels", active: !activeCategory && !searchQuery, count: allChannels.length },
-    { label: t("channelsPage.live"), href: "/channels?category=active", active: showActive, count: channelStats.totalActive },
+    { label: "All", href: "/channels", active: !activeCategory && !searchQuery, count: allChannels.length },
+    { label: "Live", href: "/channels?category=active", active: showActive, count: channelStats.totalActive },
     ...categories.map((c) => ({
       label: c,
       href: `/channels?category=${c.toLowerCase()}`,
       active: activeCategory.toLowerCase() === c.toLowerCase()
     }))
   ];
-  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": t("channelsPage.pageTitle", { site: "Fútbol Libre TV" }), "description": t("channelsPage.pageDesc"), "locale": locale }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<section class="bg-canvas border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14"> <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6"> <div> <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">${t("channelsPage.label")}</p> <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]"> ${searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : t("channelsPage.all")} </h1> <p class="mt-1 text-sm text-body"> ${searchQuery ? t("channelsPage.foundResults", { count: filtered.length, s: filtered.length !== 1 ? "s" : "", query: searchQuery }) : t("channelsPage.count", { count: filtered.length, s: filtered.length !== 1 ? "s" : "" })} </p> </div> <div class="w-full sm:w-72"> ${renderComponent($$result2, "SearchBar", $$SearchBar, { "placeholder": t("channelsPage.searchPlaceholder"), "value": searchQuery, "action": "/channels", "method": "GET" })} </div> </div> </div> </section> <section class="bg-canvas-soft py-8"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> <div class="overflow-x-auto pb-2 -mb-2"> ${renderComponent($$result2, "NavTabs", $$NavTabs, { "items": tabItems, "class": "flex-nowrap sm:flex-wrap" })} </div> </div> </section> <section class="bg-canvas-soft pb-16 sm:pb-20"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> ${filtered.length > 0 ? renderTemplate`<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children"> ${filtered.map((ch, i) => renderTemplate`${renderComponent($$result2, "ChannelCard", $$ChannelCard, { "name": ch.name, "category": ch.category, "streamUrl": ch.streamUrl, "isActive": ch.isActive, "index": i, "locale": locale })}`)} </div>` : renderTemplate`<div class="text-center py-20"> <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute"> <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path> </svg> </div> <h3 class="text-lg font-semibold text-ink mb-2"> ${searchQuery ? t("channelsPage.notFoundTitle", { query: searchQuery }) : t("channelsPage.notFoundTitleCategory")} </h3> <p class="text-sm text-mute mb-6">${t("channelsPage.notFoundSubtitle")}</p> <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors"> ${t("channelsPage.viewAll")} </a> </div>`} </div> </section> ` })}`;
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Live Channels — Fútbol Libre TV", "description": "Explore all live sports channels available. Filter by region, search for your favorite channel, and enjoy HD streams." }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<section class="bg-canvas border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14"> <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6"> <div> <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Channels</p> <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]"> ${searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : "All channels"} </h1> <p class="mt-1 text-sm text-body"> ${filtered.length} channel${filtered.length !== 1 ? "s" : ""} ${searchQuery ? ` found for "${searchQuery}"` : ""} </p> </div> <div class="w-full sm:w-72"> ${renderComponent($$result2, "SearchBar", $$SearchBar, { "placeholder": "Search channels...", "value": searchQuery, "action": "/channels", "method": "GET" })} </div> </div> </div> </section> <section class="bg-canvas-soft py-8"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> <div class="overflow-x-auto pb-2 -mb-2"> ${renderComponent($$result2, "NavTabs", $$NavTabs, { "items": tabItems, "class": "flex-nowrap sm:flex-wrap" })} </div> </div> </section> <section class="bg-canvas-soft pb-16 sm:pb-20"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> ${filtered.length > 0 ? renderTemplate`<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children"> ${filtered.map((ch, i) => renderTemplate`${renderComponent($$result2, "ChannelCard", $$ChannelCard, { "name": ch.name, "category": ch.category, "streamUrl": ch.streamUrl, "isActive": ch.isActive, "index": i })}`)} </div>` : renderTemplate`<div class="text-center py-20"> <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute"> <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path> </svg> </div> <h3 class="text-lg font-semibold text-ink mb-2"> ${searchQuery ? `No channels found for "${searchQuery}"` : "No channels in this category"} </h3> <p class="text-sm text-mute mb-6">Try a different search term or browse all categories.</p> <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
+View all channels
+</a> </div>`} </div> </section> ` })}`;
 }, "/home/dgfrii1800/football/src/pages/channels/index.astro", void 0);
 
 const $$file = "/home/dgfrii1800/football/src/pages/channels/index.astro";

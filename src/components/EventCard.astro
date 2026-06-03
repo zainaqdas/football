@@ -25,12 +25,10 @@ export interface Props {
   country?: EventCountry | null;
   embeds?: EmbedInfo[];
   index?: number;
-  locale?: string;
 }
 
-const { description, hour, date, country, embeds = [], index = 0, locale = 'en' } = Astro.props;
+const { description, hour, date, country, embeds = [], index = 0 } = Astro.props;
 const delay = index * 80;
-const isSpanish = locale === 'es';
 ---
 
 <div
@@ -55,7 +53,7 @@ const isSpanish = locale === 'es';
         )}
       </div>
       <h3 class="text-sm font-medium text-ink leading-snug">
-        {description || (isSpanish ? 'Evento sin nombre' : 'Unnamed event')}
+        {description || 'Unnamed event'}
       </h3>
 
       <!-- Embeds - clickable to our player when streamId is found -->

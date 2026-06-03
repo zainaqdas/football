@@ -7,14 +7,11 @@ export interface Props {
   streamUrl: string;
   isActive: boolean;
   index?: number;
-  locale?: string;
 }
 
-const { name, category, streamUrl, isActive, index = 0, locale = 'en' } = Astro.props;
+const { name, category, streamUrl, isActive, index = 0 } = Astro.props;
 const streamId = extractStreamId(streamUrl) || '';
 const delay = index * 60;
-
-const isSpanish = locale === 'es';
 ---
 
 <a
@@ -39,7 +36,7 @@ const isSpanish = locale === 'es';
       }`}
     >
       <span class={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
-      {isActive ? (isSpanish ? 'En vivo' : 'Live') : (isSpanish ? 'Inactivo' : 'Inactive')}
+      {isActive ? 'Live' : 'Inactive'}
     </span>
   </div>
 
@@ -47,13 +44,13 @@ const isSpanish = locale === 'es';
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
       <polygon points="5 3 19 12 5 21 5 3"/>
     </svg>
-    <span>{isActive ? (isSpanish ? 'Transmitiendo en vivo' : 'Streaming live') : (isSpanish ? 'Sin transmisión' : 'No stream')}</span>
+    <span>{isActive ? 'Streaming live' : 'No stream'}</span>
   </div>
 
   <!-- Hover indicator -->
   <div class="mt-3 pt-3 border-t border-hairline opacity-0 group-hover:opacity-100 transition-opacity">
     <span class="text-xs font-medium text-link flex items-center gap-1">
-      {isSpanish ? 'Ver stream' : 'Watch stream'}
+      Watch stream
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
       </svg>
