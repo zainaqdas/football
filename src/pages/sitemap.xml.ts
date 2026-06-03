@@ -1,9 +1,9 @@
 import { TVTVHDScraper } from '../../scraper/src/index.js';
 import { withCache } from '../lib/cache.ts';
 
-export async function GET() {
+export async function GET({ url }: { url: URL }) {
   const scraper = new TVTVHDScraper();
-  const SITE_URL = 'https://golhd.tv';
+  const SITE_URL = url.origin;
   const CACHE_TTL = 60_000; // 60 seconds
 
   try {

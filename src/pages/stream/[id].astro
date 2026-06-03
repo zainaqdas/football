@@ -38,7 +38,7 @@ const description = channel
   : 'El canal que buscas no está disponible actualmente en Gol HD.';
 ---
 
-<Layout title={title} description={description} canonical={channel ? `https://golhd.tv/stream/${id}` : 'https://golhd.tv/'}>
+<Layout title={title} description={description} canonical={channel ? '/stream/' + id : '/'}>
   
   <section class="bg-canvas min-h-[calc(100vh-4rem)]">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">

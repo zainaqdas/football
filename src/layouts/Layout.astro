@@ -7,7 +7,37 @@ export interface Props {
   canonical?: string;
 }
 
-const { title = 'Gol HD — Fútbol en Vivo y Canales Deportivos HD', description = 'Disfruta de fútbol en vivo y canales deportivos HD en Gol HD. Mira partidos de fútbol online, programación deportiva y streaming de deportes en vivo desde cualquier lugar. Accede a los mejores canales de deportes gratis.', canonical = 'https://golhd.tv/' } = Astro.props;
+const { title = 'Gol HD — Fútbol en Vivo y Canales Deportivos HD', description = 'Disfruta de fútbol en vivo y canales deportivos HD en Gol HD. Mira partidos de fútbol online, programación deportiva y streaming de deportes en vivo desde cualquier lugar. Accede a los mejores canales de deportes gratis.' } = Astro.props;
+
+const rawCanonical = Astro.props.canonical || '/';
+const siteOrigin = Astro.url.origin;
+// If canonical is a relative path (starts with /), prepend the origin
+const canonical = rawCanonical.startsWith('/') ? siteOrigin + rawCanonical : rawCanonical;
+
+// JSON-LD schema strings (built dynamically so no hardcoded domain)
+const orgSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Gol HD',
+  url: siteOrigin,
+  logo: siteOrigin + '/logo.svg',
+  description: 'Gol HD es tu plataforma de streaming de deportes en vivo. Disfruta de canales deportivos y partidos de fútbol en HD desde cualquier lugar.',
+  sameAs: [],
+});
+
+const siteSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Gol HD',
+  url: siteOrigin,
+  description: 'Canales deportivos en vivo y partidos de fútbol en HD. Mira fútbol en vivo, sigue la programación deportiva y disfruta de streaming deportivo gratis.',
+  inLanguage: 'es',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: siteOrigin + '/channels?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+});
 ---
 
 <!doctype html>
@@ -24,34 +54,10 @@ const { title = 'Gol HD — Fútbol en Vivo y Canales Deportivos HD', descriptio
     <link rel="canonical" href={canonical} />
 
     <!-- JSON-LD Schema: Organization -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Gol HD",
-        "url": "https://golhd.tv",
-        "logo": "https://golhd.tv/logo.svg",
-        "description": "Gol HD es tu plataforma de streaming de deportes en vivo. Disfruta de canales deportivos y partidos de fútbol en HD desde cualquier lugar.",
-        "sameAs": []
-      }
-    </script>
+    <script type="application/ld+json">{orgSchema}</script>
 
     <!-- JSON-LD Schema: WebSite -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Gol HD",
-        "url": "https://golhd.tv",
-        "description": "Canales deportivos en vivo y partidos de fútbol en HD. Mira fútbol en vivo, sigue la programación deportiva y disfruta de streaming deportivo gratis.",
-        "inLanguage": "es",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://golhd.tv/channels?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
+    <script type="application/ld+json">{siteSchema}</script>
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -174,7 +180,7 @@ const { title = 'Gol HD — Fútbol en Vivo y Canales Deportivos HD', descriptio
         </div>
         <div class="mt-12 pt-8 border-t border-hairline flex flex-col sm:flex-row items-center justify-between gap-4">
           <p class="text-sm text-mute" style="color: #52525b;">&copy; {new Date().getFullYear()} Gol HD. All rights reserved.</p>
-          <p class="text-xs font-mono" style="color: #3f3f46;">golhd.tv</p>
+          <p class="text-xs font-mono" style="color: #3f3f46;">Gol HD</p>
         </div>
       </div>
     </footer>
