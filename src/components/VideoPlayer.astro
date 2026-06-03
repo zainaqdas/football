@@ -14,6 +14,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 8)}`;
     <>
       <video
         id={playerId}
+        data-hls-url={hlsUrl}
         class="w-full aspect-video"
         controls
         playsinline
@@ -22,64 +23,39 @@ const playerId = `player-${Math.random().toString(36).slice(2, 8)}`;
         <p>Tu navegador no soporta la reproducción de video.</p>
       </video>
 
-      <script define:vars={{ hlsUrl, playerId }}>
+      <script>
         import Hls from 'hls.js';
 
-        (function() {
-          try {
-            const video = document.getElementById(playerId);
-            if (!video) return;
-
-            if (Hls.isSupported()) {
-              const hls = new Hls({
-                enableWorker: false,
-                lowLatencyMode: true,
-                backbufferLength: 30,
-              });
-              hls.loadSource(hlsUrl);
-              hls.attachMedia(video);
-              hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                video.play().catch(function() {
-                  // Autoplay blocked — user will click play
-                });
-              });
-              hls.on(Hls.Events.ERROR, function(event, data) {
-                if (data.fatal) {
-                  switch(data.type) {
-                    case Hls.ErrorTypes.NETWORK_ERROR:
-                      hls.startLoad();
-                      break;
-                    case Hls.ErrorTypes.MEDIA_ERROR:
-                      hls.recoverMediaError();
-                      break;
-                    default:
-                      console.error('HLS fatal error:', data);
-                      break;
-                  }
+        const video = document.getElementById('{playerId}');
+        if (video) {
+          const streamUrl = video.getAttribute('data-hls-url');
+          if (streamUrl && Hls.isSupported()) {
+            const hls = new Hls({
+              enableWorker: false,
+              lowLatencyMode: true,
+              backbufferLength: 30,
+            });
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              video.play().catch(() => {});
+            });
+            hls.on(Hls.Events.ERROR, (_event, data) => {
+              if (data.fatal) {
+                if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                  hls.startLoad();
+                } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                  hls.recoverMediaError();
                 }
-              });
-
-              // Cleanup on navigation away
-              window.addEventListener('beforeunload', function() {
-                hls.destroy();
-              });
-              window.addEventListener('pagehide', function() {
-                hls.destroy();
-              });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-              video.src = hlsUrl;
-              video.addEventListener('loadedmetadata', function() {
-                video.play().catch(function() {});
-              });
-            } else {
-              video.insertAdjacentHTML('afterend',
-                '<div class="absolute inset-0 flex items-center justify-center bg-ink/90"><p class="text-white/60 text-sm px-4 text-center">Este navegador no soporta HLS.</p></div>'
-              );
-            }
-          } catch (e) {
-            console.error('Error loading HLS player:', e);
+              }
+            });
+            window.addEventListener('beforeunload', () => hls.destroy());
+            window.addEventListener('pagehide', () => hls.destroy());
+          } else if (streamUrl && video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = streamUrl;
+            video.addEventListener('loadedmetadata', () => video.play().catch(() => {}));
           }
-        })();
+        }
       </script>
     </>
   ) : (

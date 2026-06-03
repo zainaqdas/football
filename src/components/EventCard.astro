@@ -2,6 +2,7 @@
 export interface EmbedInfo {
   name?: string;
   iframe?: { url?: string; decodedParams?: any };
+  streamId?: string;
 }
 
 export interface EventCountry {
@@ -47,28 +48,29 @@ const delay = index * 80;
         {description || 'Evento sin nombre'}
       </h3>
 
-      <!-- Embeds -->
+      <!-- Embeds - clickable to our player when streamId is found -->
       {embeds.length > 0 && (
         <div class="flex flex-wrap gap-1.5 mt-3">
-          {embeds.map((embed) => (
-            embed.iframe?.url ? (
+          {embeds.map((embed) => {
+            const href = embed.streamId ? `/stream/${embed.streamId}` : null;
+            return href ? (
               <a
-                href={embed.iframe.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-1 px-2.5 py-1 bg-canvas-soft-2 text-xs font-medium text-body rounded-full no-underline hover:text-ink hover:bg-hairline transition-colors"
+                href={href}
+                data-stream-id={embed.streamId}
+                data-channel-name={embed.name || ''}
+                class="inline-flex items-center gap-1 px-2.5 py-1 bg-canvas-soft-2 text-xs font-medium text-body rounded-full no-underline hover:text-ink hover:bg-hairline transition-colors group"
               >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:text-link transition-colors">
                   <polygon points="5 3 19 12 5 21 5 3"/>
                 </svg>
-                {embed.name || 'Ver'}
+                {embed.name || 'Stream'}
               </a>
             ) : (
               <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-canvas-soft-2 text-xs text-mute rounded-full">
-                {embed.name || 'Embed'}
+                {embed.name || 'Stream'}
               </span>
-            )
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
