@@ -6,12 +6,13 @@ export interface Props {
 }
 
 const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
+const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` : null;
 const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 <div class={`relative bg-black rounded-xl overflow-hidden group ${className}`}>
-  {hlsUrl ? (
-    <div id={playerId} class="relative w-full aspect-video bg-black overflow-hidden" data-hls-url={hlsUrl} data-channel-name={channelName}>
+  {hlsUrl && proxiedUrl ? (
+    <div id={playerId} class="relative w-full aspect-video bg-black overflow-hidden" data-proxied-url={proxiedUrl} data-channel-name={channelName}>
       <!-- Video element (hidden default controls) -->
       <video class="w-full h-full object-contain cursor-pointer" playsinline preload="metadata"></video>
 
@@ -117,9 +118,9 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function () {
     // Find all player containers
-    document.querySelectorAll('[id^="player-"][data-hls-url]').forEach(function (container) {
-      var hlsSource = container.getAttribute('data-hls-url');
-      if (!hlsSource) return;
+    document.querySelectorAll('[id^="player-"][data-proxied-url]').forEach(function (container) {
+      var proxiedUrl = container.getAttribute('data-proxied-url');
+      if (!proxiedUrl) return;
 
       var video = container.querySelector('video');
       if (!video) return;
@@ -380,7 +381,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
           hls.destroy();
           hls = null;
         }
-        initPlayer(hlsSource);
+        initPlayer(proxiedUrl);
       });
 
       // ─── Keyboard shortcuts ───
@@ -399,7 +400,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
       window.addEventListener('pagehide', function () { if (hls) hls.destroy(); });
 
       // ─── Start ───
-      initPlayer(hlsSource);
+      initPlayer(proxiedUrl);
       updateVolumeUI();
     });
   });
