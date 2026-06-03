@@ -207,8 +207,8 @@ const sortedDates = Object.keys(eventsByDate).sort();
   // Shared custom player initializer for modal players
   function setupModalPlayer(container, modalContainer) {
     var video = container.querySelector('video');
-    var proxiedUrl = container.getAttribute('data-proxied-url');
-    if (!video || !proxiedUrl) return;
+    var hlsSrc = container.getAttribute('data-hls-url');
+    if (!video || !hlsSrc) return;
 
     var c = {
       bar: container.querySelector('.controls-bar'),
@@ -379,12 +379,12 @@ const sortedDates = Object.keys(eventsByDate).sort();
       c.errorOverlay.classList.add('hidden');
       c.loadingSpinner.classList.remove('hidden');
       if (hls) { hls.destroy(); hls = null; }
-      initHls(proxiedUrl);
+      initHls(hlsSrc);
     });
 
     if (modalContainer) modalContainer._hlsRef = { destroy: function () { if (hls) { hls.destroy(); hls = null; } } };
 
-    initHls(proxiedUrl);
+    initHls(hlsSrc);
     updateVolumeUI();
   }
 
@@ -431,8 +431,7 @@ const sortedDates = Object.keys(eventsByDate).sort();
         var playerDiv = document.createElement('div');
         playerDiv.id = playerId;
         playerDiv.className = 'relative w-full aspect-video bg-black overflow-hidden';
-        var proxyBase = 'https://hls-proxy.dgfrii1800.workers.dev/?url=';
-        playerDiv.setAttribute('data-proxied-url', proxyBase + encodeURIComponent(data.hlsUrl));
+        playerDiv.setAttribute('data-hls-url', data.hlsUrl);
         playerDiv.innerHTML = [
           '<video class="w-full h-full object-contain cursor-pointer" playsinline preload="metadata"></video>',
           '<div class="center-play absolute inset-0 flex items-center justify-center z-10 pointer-events-none transition-opacity duration-300 opacity-0">',

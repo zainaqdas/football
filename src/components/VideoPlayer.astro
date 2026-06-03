@@ -6,14 +6,12 @@ export interface Props {
 }
 
 const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
-const WORKER_PROXY = 'https://hls-proxy.dgfrii1800.workers.dev/';
-const proxiedUrl = hlsUrl ? `${WORKER_PROXY}?url=${encodeURIComponent(hlsUrl)}` : null;
 const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 <div class={`relative bg-black rounded-xl overflow-hidden group ${className}`}>
-  {hlsUrl && proxiedUrl ? (
-    <div id={playerId} class="relative w-full aspect-video bg-black overflow-hidden" data-proxied-url={proxiedUrl} data-channel-name={channelName}>
+  {hlsUrl ? (
+    <div id={playerId} class="relative w-full aspect-video bg-black overflow-hidden" data-hls-url={hlsUrl} data-channel-name={channelName}>
       <!-- Video element (hidden default controls) -->
       <video class="w-full h-full object-contain cursor-pointer" playsinline preload="metadata"></video>
 
@@ -119,9 +117,9 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function () {
     // Find all player containers
-    document.querySelectorAll('[id^="player-"][data-proxied-url]').forEach(function (container) {
-      var proxiedUrl = container.getAttribute('data-proxied-url');
-      if (!proxiedUrl) return;
+    document.querySelectorAll('[id^="player-"][data-hls-url]').forEach(function (container) {
+      var hlsSource = container.getAttribute('data-hls-url');
+      if (!hlsSource) return;
 
       var video = container.querySelector('video');
       if (!video) return;
@@ -382,7 +380,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
           hls.destroy();
           hls = null;
         }
-        initPlayer(proxiedUrl);
+        initPlayer(hlsSource);
       });
 
       // ─── Keyboard shortcuts ───
@@ -401,7 +399,7 @@ const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
       window.addEventListener('pagehide', function () { if (hls) hls.destroy(); });
 
       // ─── Start ───
-      initPlayer(proxiedUrl);
+      initPlayer(hlsSource);
       updateVolumeUI();
     });
   });
