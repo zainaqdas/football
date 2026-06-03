@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import VideoPlayer from '../../components/VideoPlayer.astro';
 import { TVTVHDScraper } from '../../../scraper/src/index.js';
 
 const { id } = Astro.params;
@@ -21,6 +22,9 @@ try {
 } catch {
   // Handle errors gracefully
 }
+
+// Get the primary HLS stream URL to embed directly
+const hlsUrl = streamInfo?.hlsStreams?.[0] || null;
 
 const title = channel ? `${channel.name} — En Vivo — Fútbol Libre TV` : 'Canal no encontrado — Fútbol Libre TV';
 const description = channel
@@ -48,26 +52,10 @@ const description = channel
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main content -->
             <div class="lg:col-span-2">
-              <div class="bg-ink rounded-xl overflow-hidden">
-                {streamInfo?.iframes && streamInfo.iframes.length > 0 ? (
-                  <iframe
-                    src={streamInfo.iframes[0].src}
-                    class="w-full aspect-video bg-black"
-                    allow="autoplay; encrypted-media; fullscreen"
-                    allowfullscreen
-                    title={`Reproductor de video — ${channel.name}`}
-                  />
-                ) : (
-                  <div class="w-full aspect-video bg-ink flex items-center justify-center">
-                    <div class="text-center">
-                      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                      </div>
-                      <p class="text-white/60 text-sm">Reproductor de video</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <VideoPlayer
+                hlsUrl={hlsUrl}
+                channelName={channel.name}
+              />
 
               <!-- Channel info -->
               <div class="mt-6">
@@ -87,54 +75,52 @@ const description = channel
                     </div>
                     <p class="text-sm text-mute font-mono">{channel.category}</p>
                   </div>
-                  <a
-                    href={channel.streamUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="shrink-0 inline-flex items-center gap-2 h-10 px-5 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    Abrir stream
-                  </a>
                 </div>
 
-                {streamInfo && (
-                  <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {streamInfo.iframes.length > 0 && (
-                      <div class="bg-canvas-soft rounded-lg p-4">
-                        <p class="text-xs font-mono text-mute uppercase tracking-wider mb-2">Embeds</p>
-                        <div class="space-y-1.5">
-                          {streamInfo.iframes.map((iframe, i) => (
-                            <div key={i} class="text-xs text-body truncate">
-                              <span class="font-mono text-mute">#{i + 1}:</span> {iframe.src}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {streamInfo.hlsStreams.length > 0 && (
-                      <div class="bg-canvas-soft rounded-lg p-4">
-                        <p class="text-xs font-mono text-mute uppercase tracking-wider mb-2">HLS Streams</p>
-                        <div class="space-y-1.5">
-                          {streamInfo.hlsStreams.map((hls, i) => (
-                            <div key={i} class="text-xs text-body truncate font-mono">{hls}</div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                {streamInfo && hlsUrl && (
+                  <div class="mt-6 p-4 bg-green-50 border border-green-100 rounded-lg">
+                    <div class="flex items-center gap-2 text-sm text-green-800">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                      </svg>
+                      <span class="font-medium">Stream incrustado directamente</span>
+                      <span class="text-green-600 text-xs ml-auto">Reproducción en vivo</span>
+                    </div>
                   </div>
                 )}
 
-                <div class="mt-4">
-                  <details class="group">
-                    <summary class="text-xs font-mono text-mute cursor-pointer hover:text-body transition-colors">
-                      URL del stream
+                {streamInfo && (
+                  <details class="group mt-6">
+                    <summary class="text-sm font-mono text-mute cursor-pointer hover:text-body transition-colors inline-flex items-center gap-2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                      Información técnica del stream
                     </summary>
-                    <code class="block mt-2 p-3 bg-canvas-soft-2 rounded-lg text-xs font-mono text-body break-all">
-                      {channel.streamUrl}
-                    </code>
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {streamInfo.hlsStreams.length > 0 && (
+                        <div class="bg-canvas-soft rounded-lg p-4">
+                          <p class="text-xs font-mono text-mute uppercase tracking-wider mb-2">HLS Streams</p>
+                          <div class="space-y-1.5">
+                            {streamInfo.hlsStreams.map((hls, i) => (
+                              <div key={i} class="text-xs text-body truncate font-mono">{hls}</div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {streamInfo.iframes.length > 0 && (
+                        <div class="bg-canvas-soft rounded-lg p-4">
+                          <p class="text-xs font-mono text-mute uppercase tracking-wider mb-2">Embeds</p>
+                          <div class="space-y-1.5">
+                            {streamInfo.iframes.map((iframe, i) => (
+                              <div key={i} class="text-xs text-body truncate">
+                                <span class="font-mono text-mute">#{i + 1}:</span> {iframe.src}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </details>
-                </div>
+                )}
               </div>
             </div>
 
@@ -157,6 +143,21 @@ const description = channel
                       {channel.isActive ? 'En vivo' : 'Inactivo'}
                     </span>
                   </div>
+                  <div class="border-t border-hairline my-2" />
+                  <div class="flex justify-between text-sm">
+                    <span class="text-mute">Calidad</span>
+                    <span class="font-mono text-xs text-ink">HD</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-mute">Protocolo</span>
+                    <span class="font-mono text-xs text-ink">HLS</span>
+                  </div>
+                  {hlsUrl && (
+                    <div class="flex justify-between text-sm">
+                      <span class="text-mute">Reproducción</span>
+                      <span class="font-mono text-xs text-green-600">Incrustada</span>
+                    </div>
+                  )}
                   {streamInfo && (
                     <>
                       <div class="border-t border-hairline my-2" />
