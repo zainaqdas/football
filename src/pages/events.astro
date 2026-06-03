@@ -435,7 +435,7 @@ const sortedDates = Object.keys(eventsByDate).sort();
         var playerDiv = document.createElement('div');
         playerDiv.id = playerId;
         playerDiv.className = 'relative w-full aspect-video bg-black overflow-hidden';
-        playerDiv.setAttribute('data-proxied-url', '/api/hls-proxy?url=' + encodeURIComponent(data.hlsUrl));
+        playerDiv.setAttribute('data-proxied-url', 'https://hls-proxy.dgfrii1800.workers.dev/?url=' + encodeURIComponent(data.hlsUrl));
         playerDiv.innerHTML = [
           '<video class="w-full h-full object-contain cursor-pointer" playsinline preload="metadata"></video>',
           '<div class="center-play absolute inset-0 flex items-center justify-center z-10 pointer-events-none transition-opacity duration-300 opacity-0">',
