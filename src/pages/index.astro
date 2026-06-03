@@ -28,7 +28,7 @@ try {
 const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
 ---
 
-<Layout title="Fútbol Libre TV — Canales en Vivo y Partidos de Fútbol Online" description="Fútbol Libre TV HD reúne canales en vivo y partidos de fútbol online. Consulta la agenda deportiva del día y accede a transmisiones de ligas y torneos internacionales en calidad HD.">
+<Layout title="Fútbol Libre TV — Live Channels & Football Matches Online" description="Fútbol Libre TV brings together live channels and online football matches. Check today's sports schedule and access international league and tournament streams in HD quality.">
   
   <!-- ═══ HERO BAND ═══ -->
   <section class="relative overflow-hidden bg-canvas">
@@ -38,27 +38,27 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
         <!-- Badge -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-canvas/80 backdrop-blur-sm border border-hairline rounded-full text-xs font-mono text-body mb-8 animate-fade-in">
           <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          {channelStats.totalActive} canales en vivo
+          {channelStats.totalActive} live channels
         </div>
 
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-ink leading-[1.05] tracking-[-2.4px] sm:tracking-[-3px] animate-fade-in" style="animation-delay: 100ms">
-          Fútbol en vivo,<br />
-          <span class="bg-gradient-to-r from-grad-dev-start via-grad-prev-end to-grad-ship-start bg-clip-text text-transparent">donde sea que estés.</span>
+          Live football,<br />
+          <span class="bg-gradient-to-r from-grad-dev-start via-grad-prev-end to-grad-ship-start bg-clip-text text-transparent">wherever you are.</span>
         </h1>
 
         <p class="mt-6 text-lg sm:text-xl text-body leading-relaxed max-w-xl mx-auto animate-fade-in" style="animation-delay: 200ms">
-          Accede a canales deportivos en vivo y sigue la agenda de partidos de las ligas y torneos más importantes del mundo, todo en un solo lugar.
+          Access live sports channels and follow the match schedule from the world's most important leagues and tournaments, all in one place.
         </p>
 
         <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style="animation-delay: 300ms">
           <a href="/channels" class="inline-flex items-center h-12 px-8 bg-ink text-white text-base font-medium rounded-pill no-underline hover:bg-ink/90 transition-all duration-300 hover:scale-105 shadow-lg shadow-ink/20">
-            Explorar Canales
+            Explore Channels
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2">
               <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
             </svg>
           </a>
           <a href="/events" class="inline-flex items-center h-12 px-8 bg-canvas text-ink text-base font-medium rounded-pill no-underline border border-hairline hover:border-hairline-strong hover:bg-canvas-soft transition-all duration-300">
-            Ver Agenda
+            View Schedule
           </a>
         </div>
       </div>
@@ -71,10 +71,10 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
   <section class="bg-canvas-soft py-16 sm:py-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 stagger-children">
-        <StatsCard label="Canales Totales" value={channelStats.totalChannels} icon="channels" />
-        <StatsCard label="Canales en Vivo" value={channelStats.totalActive} change={`${Math.round(channelStats.totalActive / channelStats.totalChannels * 100)}%`} icon="active" />
-        <StatsCard label="Categorías" value={channelStats.totalCategories} icon="categories" />
-        <StatsCard label="Eventos Hoy" value={eventStats.totalEvents} change={`${eventStats.uniqueCountries.length} países`} icon="events" />
+        <StatsCard label="Total Channels" value={channelStats.totalChannels} icon="channels" />
+        <StatsCard label="Live Channels" value={channelStats.totalActive} change={`${Math.round(channelStats.totalActive / channelStats.totalChannels * 100)}%`} icon="active" />
+        <StatsCard label="Categories" value={channelStats.totalCategories} icon="categories" />
+        <StatsCard label="Events Today" value={eventStats.totalEvents} change={`${eventStats.uniqueCountries.length} países`} icon="events" />
       </div>
     </div>
   </section>
@@ -83,12 +83,12 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
   <section class="bg-canvas py-16 sm:py-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <p class="text-xs font-mono text-mute uppercase tracking-widest mb-3">Categorías</p>
+        <p class="text-xs font-mono text-mute uppercase tracking-widest mb-3">Categories</p>
         <h2 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-          Explora por región.
+          Explore by region.
         </h2>
         <p class="mt-3 text-body text-base max-w-lg mx-auto">
-          {channelStats.totalCategories} regiones disponibles con canales deportivos en vivo.
+          {channelStats.totalCategories} regions with live sports channels.
         </p>
       </div>
 
@@ -105,7 +105,7 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
             </div>
             <h3 class="text-sm font-semibold text-ink group-hover:text-link transition-colors">{cat.name}</h3>
             <p class="text-xs text-mute mt-1 font-mono">
-              {cat.active}/{cat.total} activos
+              {cat.active}/{cat.total} active
             </p>
             <!-- Mini bar -->
             <div class="mt-3 h-1 bg-canvas-soft-2 rounded-full overflow-hidden">
@@ -122,13 +122,13 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex items-end justify-between mb-10">
         <div>
-          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-3">En Vivo Ahora</p>
+          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-3">Live Now</p>
           <h2 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-            Canales destacados.
+            Featured channels.
           </h2>
         </div>
         <a href="/channels" class="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-link no-underline hover:underline">
-          Ver todos
+          View all
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
       </div>
@@ -147,13 +147,13 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
         </div>
       ) : (
         <div class="text-center py-16 text-mute">
-          <p>No hay canales disponibles en este momento.</p>
+          <p>No channels available at the moment.</p>
         </div>
       )}
 
       <div class="mt-8 text-center sm:hidden">
         <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
-          Ver todos los canales
+          View all channels
         </a>
       </div>
     </div>
@@ -164,14 +164,14 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex items-end justify-between mb-10">
         <div>
-          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-3">Agenda Deportiva</p>
+          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-3">Sports Schedule</p>
           <h2 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-            Partidos de hoy.
+            Today's matches.
           </h2>
-          <p class="mt-2 text-body text-sm">{todayEvents.length} eventos programados</p>
+          <p class="mt-2 text-body text-sm">{todayEvents.length} event{todayEvents.length !== 1 ? 's' : ''} scheduled</p>
         </div>
         <a href="/events" class="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-link no-underline hover:underline">
-          Ver agenda completa
+          View full schedule
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
       </div>
@@ -191,7 +191,7 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
           {todayEvents.length > 8 && (
             <div class="text-center pt-6">
               <a href="/events" class="inline-flex items-center gap-1.5 text-sm font-medium text-link no-underline hover:underline">
-                Ver los {todayEvents.length} eventos de hoy
+                View all {todayEvents.length} event{todayEvents.length !== 1 ? 's' : ''} today
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </a>
             </div>
@@ -199,7 +199,7 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
         </div>
       ) : (
         <div class="text-center py-16 text-mute">
-          <p>No hay eventos programados para hoy.</p>
+          <p>No events scheduled for today.</p>
         </div>
       )}
     </div>
@@ -209,17 +209,17 @@ const featuredChannels = allChannels.filter(c => c.isActive).slice(0, 8);
   <section class="bg-ink text-white py-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
       <h2 class="text-3xl sm:text-4xl font-semibold tracking-[-1.28px]">
-        Todo el fútbol en un solo lugar.
+        All football in one place.
       </h2>
       <p class="mt-4 text-lg text-white/70 max-w-lg mx-auto">
-        {channelStats.totalChannels} canales de {channelStats.totalCategories} regiones. Transmisiones en vivo de las ligas y torneos más importantes.
+        {channelStats.totalChannels} channels from {channelStats.totalCategories} regions. Live streams of the most important leagues and tournaments.
       </p>
       <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="/channels" class="inline-flex items-center h-12 px-8 bg-white text-ink text-base font-medium rounded-pill no-underline hover:bg-white/90 transition-all duration-300 hover:scale-105">
-          Comenzar a ver
+          Start Watching
         </a>
         <a href="/events" class="inline-flex items-center h-12 px-8 border border-white/20 text-white text-base font-medium rounded-pill no-underline hover:bg-white/10 transition-all duration-300">
-          Ver agenda
+          View Schedule
         </a>
       </div>
     </div>

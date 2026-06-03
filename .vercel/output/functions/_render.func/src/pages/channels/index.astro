@@ -52,8 +52,8 @@ filtered.sort((a, b) => {
 });
 
 const tabItems = [
-  { label: 'Todos', href: '/channels', active: !activeCategory && !searchQuery, count: allChannels.length },
-  { label: 'En Vivo', href: '/channels?category=active', active: showActive, count: channelStats.totalActive },
+  { label: 'All', href: '/channels', active: !activeCategory && !searchQuery, count: allChannels.length },
+  { label: 'Live', href: '/channels?category=active', active: showActive, count: channelStats.totalActive },
   ...categories.map(c => ({
     label: c,
     href: `/channels?category=${c.toLowerCase()}`,
@@ -62,23 +62,23 @@ const tabItems = [
 ];
 ---
 
-<Layout title="Canales en Vivo — Fútbol Libre TV" description="Explora todos los canales deportivos disponibles en vivo. Filtra por región, busca tu canal favorito y disfruta de las transmisiones en HD.">
+<Layout title="Live Channels — Fútbol Libre TV" description="Explore all live sports channels available. Filter by region, search for your favorite channel, and enjoy HD streams.">
   
   <section class="bg-canvas border-b border-hairline">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
-          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Canales</p>
+          <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Channels</p>
           <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-            {searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'Todos los canales'}
+            {searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : 'All channels'}
           </h1>
           <p class="mt-1 text-sm text-body">
-            {filtered.length} canal{filtered.length !== 1 ? 'es' : ''}
-            {searchQuery && ` encontrados para "${searchQuery}"`}
+            {filtered.length} channel{filtered.length !== 1 ? 's' : ''}
+            {searchQuery && ` found for "${searchQuery}"`}
           </p>
         </div>
         <div class="w-full sm:w-72">
-          <SearchBar placeholder="Buscar canales..." value={searchQuery} action="/channels" method="GET" />
+          <SearchBar placeholder="Search channels..." value={searchQuery} action="/channels" method="GET" />
         </div>
       </div>
     </div>
@@ -114,11 +114,11 @@ const tabItems = [
             </svg>
           </div>
           <h3 class="text-lg font-semibold text-ink mb-2">
-            {searchQuery ? `No se encontraron canales para "${searchQuery}"` : 'No hay canales en esta categoría'}
+            {searchQuery ? `No channels found for "${searchQuery}"` : 'No channels in this category'}
           </h3>
-          <p class="text-sm text-mute mb-6">Intenta con otro término de búsqueda o explora todas las categorías.</p>
+          <p class="text-sm text-mute mb-6">Try a different search term or browse all categories.</p>
           <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
-            Ver todos los canales
+            View all channels
           </a>
         </div>
       )}

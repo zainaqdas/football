@@ -7,7 +7,7 @@ export interface Props {
   class?: string;
 }
 
-const { placeholder = 'Buscar canales...', value = '', action = '', method = 'GET', class: className = '' } = Astro.props;
+const { placeholder = 'Search channels...', value = '', action = '', method = 'GET', class: className = '' } = Astro.props;
 ---
 
 <form action={action} method={method} class={`relative ${className}`}>

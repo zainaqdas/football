@@ -10,7 +10,7 @@ const { title = 'Fútbol Libre TV — Live Football Streaming', description = 'W
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,7 +23,7 @@ const { title = 'Fútbol Libre TV — Live Football Streaming', description = 'W
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="es_LA" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -60,15 +60,15 @@ const { title = 'Fútbol Libre TV — Live Football Streaming', description = 'W
 
         <!-- Desktop nav -->
         <div class="hidden md:flex items-center gap-1">
-          <a href="/" class="nav-link">Inicio</a>
-          <a href="/channels" class="nav-link">Canales</a>
-          <a href="/events" class="nav-link">Eventos</a>
+          <a href="/" class="nav-link">Home</a>
+          <a href="/channels" class="nav-link">Channels</a>
+          <a href="/events" class="nav-link">Events</a>
         </div>
 
         <!-- Desktop CTA -->
         <div class="hidden md:flex items-center gap-3">
           <a href="/channels" class="inline-flex items-center h-7 px-2 bg-ink text-white text-sm font-medium rounded-sm no-underline hover:bg-ink/90 transition-colors">
-            Ver Canales
+            Watch
           </a>
         </div>
 
@@ -86,13 +86,13 @@ const { title = 'Fútbol Libre TV — Live Football Streaming', description = 'W
     <!-- Mobile menu overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-40 hidden bg-canvas/98 backdrop-blur-sm">
       <div class="flex flex-col items-center justify-center h-full gap-8">
-        <a href="/" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Inicio</a>
-        <a href="/channels" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Canales</a>
-        <a href="/events" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Eventos</a>
+        <a href="/" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Home</a>
+        <a href="/channels" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Channels</a>
+        <a href="/events" class="text-2xl font-semibold no-underline hover:text-body transition-colors" onclick="closeMenu()">Events</a>
         <a href="/channels" class="mt-4 inline-flex items-center h-10 px-6 bg-ink text-white text-base font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
-          Ver Canales
+          Watch
         </a>
-        <button id="menu-close" class="mt-8 text-sm text-mute hover:text-body transition-colors cursor-pointer bg-transparent border-none" onclick="closeMenu()">Cerrar</button>
+        <button id="menu-close" class="mt-8 text-sm text-mute hover:text-body transition-colors cursor-pointer bg-transparent border-none" onclick="closeMenu()">Close</button>
       </div>
     </div>
 
@@ -106,42 +106,42 @@ const { title = 'Fútbol Libre TV — Live Football Streaming', description = 'W
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Navegación</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Navigation</h4>
             <ul class="space-y-3">
-              <li><a href="/" class="text-sm text-body no-underline hover:text-ink transition-colors">Inicio</a></li>
-              <li><a href="/channels" class="text-sm text-body no-underline hover:text-ink transition-colors">Canales</a></li>
-              <li><a href="/events" class="text-sm text-body no-underline hover:text-ink transition-colors">Eventos</a></li>
+              <li><a href="/" class="text-sm text-body no-underline hover:text-ink transition-colors">Home</a></li>
+              <li><a href="/channels" class="text-sm text-body no-underline hover:text-ink transition-colors">Channels</a></li>
+              <li><a href="/events" class="text-sm text-body no-underline hover:text-ink transition-colors">Events</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Canales</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Channels</h4>
             <ul class="space-y-3">
               <li><a href="/channels/argentina" class="text-sm text-body no-underline hover:text-ink transition-colors">Argentina</a></li>
-              <li><a href="/channels/mexico" class="text-sm text-body no-underline hover:text-ink transition-colors">México</a></li>
-              <li><a href="/channels/espana" class="text-sm text-body no-underline hover:text-ink transition-colors">España</a></li>
+              <li><a href="/channels/mexico" class="text-sm text-body no-underline hover:text-ink transition-colors">Mexico</a></li>
+              <li><a href="/channels/espana" class="text-sm text-body no-underline hover:text-ink transition-colors">Spain</a></li>
               <li><a href="/channels/usa" class="text-sm text-body no-underline hover:text-ink transition-colors">USA</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Regiones</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Regions</h4>
             <ul class="space-y-3">
-              <li><a href="/channels/latinoamerica" class="text-sm text-body no-underline hover:text-ink transition-colors">Latinoamérica</a></li>
-              <li><a href="/channels/brasil" class="text-sm text-body no-underline hover:text-ink transition-colors">Brasil</a></li>
+              <li><a href="/channels/latinoamerica" class="text-sm text-body no-underline hover:text-ink transition-colors">Latin America</a></li>
+              <li><a href="/channels/brasil" class="text-sm text-body no-underline hover:text-ink transition-colors">Brazil</a></li>
               <li><a href="/channels/portugal" class="text-sm text-body no-underline hover:text-ink transition-colors">Portugal</a></li>
-              <li><a href="/channels/mundo" class="text-sm text-body no-underline hover:text-ink transition-colors">Mundo</a></li>
+              <li><a href="/channels/mundo" class="text-sm text-body no-underline hover:text-ink transition-colors">World</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Información</h4>
+            <h4 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Info</h4>
             <ul class="space-y-3">
               <li><span class="text-sm text-mute">Fútbol Libre TV</span></li>
-              <li><span class="text-sm text-mute">Canales en vivo y partidos</span></li>
-              <li><span class="text-sm text-mute">Transmisiones en HD</span></li>
+              <li><span class="text-sm text-mute">Live channels & matches</span></li>
+              <li><span class="text-sm text-mute">HD streaming</span></li>
             </ul>
           </div>
         </div>
         <div class="mt-12 pt-8 border-t border-hairline flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p class="text-sm text-mute">&copy; {new Date().getFullYear()} Fútbol Libre TV. Todos los derechos reservados.</p>
+          <p class="text-sm text-mute">&copy; {new Date().getFullYear()} Fútbol Libre TV. All rights reserved.</p>
           <p class="text-xs text-mute font-mono">v1.0.0</p>
         </div>
       </div>

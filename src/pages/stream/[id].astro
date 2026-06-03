@@ -26,10 +26,10 @@ try {
 // Get the HLS stream URL to play via hls.js proxy
 const hlsUrl = streamInfo?.hlsStreams?.[0] || null;
 
-const title = channel ? `${channel.name} — En Vivo — Fútbol Libre TV` : 'Canal no encontrado — Fútbol Libre TV';
+const title = channel ? `${channel.name} — Live — Fútbol Libre TV` : 'Channel not found — Fútbol Libre TV';
 const description = channel
-  ? `Ver ${channel.name} en vivo. Transmisión desde ${channel.category} en calidad HD.`
-  : 'El canal solicitado no está disponible.';
+  ? `Watch ${channel.name} live. Stream from ${channel.category} in HD quality.`
+  : 'The requested channel is not available.';
 ---
 
 <Layout title={title} description={description}>
@@ -41,7 +41,7 @@ const description = channel
         <>
           <!-- Breadcrumb -->
           <nav class="flex items-center gap-2 text-sm text-mute mb-6 font-mono">
-            <a href="/channels" class="text-mute no-underline hover:text-ink transition-colors">Canales</a>
+            <a href="/channels" class="text-mute no-underline hover:text-ink transition-colors">Channels</a>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
             <a href={`/channels/${channel.category.toLowerCase()}`} class="text-mute no-underline hover:text-ink transition-colors">{channel.category}</a>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
@@ -65,11 +65,11 @@ const description = channel
                       <h1 class="text-2xl font-semibold text-ink tracking-[-0.6px]">{channel.name}</h1>
                       {channel.isActive ? (
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-green-50 text-green-700 text-xs font-mono font-medium rounded-full">
-                          <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />En vivo
+                          <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />Live
                         </span>
                       ) : (
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-gray-50 text-gray-400 text-xs font-mono font-medium rounded-full">
-                          <span class="w-1.5 h-1.5 rounded-full bg-gray-300" />Inactivo
+                          <span class="w-1.5 h-1.5 rounded-full bg-gray-300" />Inactive
                         </span>
                       )}
                     </div>
@@ -83,8 +83,8 @@ const description = channel
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
-                      <span class="font-medium">Stream en reproducción directa</span>
-                      <span class="text-green-600 text-xs ml-auto">Reproducción en vivo</span>
+                      <span class="font-medium">Stream playing directly</span>
+                      <span class="text-green-600 text-xs ml-auto">Live playback</span>
                     </div>
                   </div>
                 )}
@@ -93,7 +93,7 @@ const description = channel
                   <details class="group mt-6">
                     <summary class="text-sm font-mono text-mute cursor-pointer hover:text-body transition-colors inline-flex items-center gap-2">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-                      Información técnica del stream
+                      Stream technical info
                     </summary>
                     <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {streamInfo.hlsStreams.length > 0 && (
@@ -127,35 +127,35 @@ const description = channel
             <!-- Sidebar -->
             <div class="lg:col-span-1">
               <div class="bg-canvas rounded-lg card-hairline p-5">
-                <h3 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Información</h3>
+                <h3 class="text-xs font-mono text-mute uppercase tracking-wider mb-4">Info</h3>
                 <div class="space-y-3">
                   <div class="flex justify-between text-sm">
-                    <span class="text-mute">Canal</span>
+                    <span class="text-mute">Channel</span>
                     <span class="font-medium text-ink">{channel.name}</span>
                   </div>
                   <div class="flex justify-between text-sm">
-                    <span class="text-mute">Región</span>
+                    <span class="text-mute">Region</span>
                     <span class="font-medium text-ink">{channel.category}</span>
                   </div>
                   <div class="flex justify-between text-sm">
-                    <span class="text-mute">Estado</span>
+                    <span class="text-mute">Status</span>
                     <span class={`font-medium ${channel.isActive ? 'text-green-600' : 'text-mute'}`}>
-                      {channel.isActive ? 'En vivo' : 'Inactivo'}
+                      {channel.isActive ? 'Live' : 'Inactive'}
                     </span>
                   </div>
                   <div class="border-t border-hairline my-2" />
                   <div class="flex justify-between text-sm">
-                    <span class="text-mute">Calidad</span>
+                    <span class="text-mute">Quality</span>
                     <span class="font-mono text-xs text-ink">HD</span>
                   </div>
                   <div class="flex justify-between text-sm">
-                    <span class="text-mute">Protocolo</span>
+                    <span class="text-mute">Protocol</span>
                     <span class="font-mono text-xs text-ink">HLS</span>
                   </div>
                   {hlsUrl && (
                     <div class="flex justify-between text-sm">
-                      <span class="text-mute">Reproducción</span>
-                      <span class="font-mono text-xs text-green-600">Directa</span>
+                      <span class="text-mute">Playback</span>
+                      <span class="font-mono text-xs text-green-600">Direct</span>
                     </div>
                   )}
                   {streamInfo && (
@@ -191,10 +191,10 @@ const description = channel
               <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-ink mb-2">Canal no encontrado</h3>
-          <p class="text-sm text-mute mb-6">El canal que buscas no está disponible o no existe.</p>
+          <h3 class="text-lg font-semibold text-ink mb-2">Channel not found</h3>
+          <p class="text-sm text-mute mb-6">The channel you're looking for is not available or doesn't exist.</p>
           <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
-            Explorar canales
+            Browse Channels
           </a>
         </div>
       )}

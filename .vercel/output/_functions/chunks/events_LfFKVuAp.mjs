@@ -1,8 +1,8 @@
-import { c as createComponent } from './astro-component_C8iFBoj9.mjs';
+import { c as createComponent } from './astro-component_B9Kp7mio.mjs';
 import 'piccolore';
-import { k as renderTemplate, o as renderComponent, m as maybeRenderHead, h as addAttribute } from './entrypoint_DlJc2ilo.mjs';
-import { $ as $$Layout } from './Layout_D9ZdTp5X.mjs';
-import { $ as $$EventCard } from './EventCard_iX20879G.mjs';
+import { k as renderTemplate, o as renderComponent, m as maybeRenderHead, h as addAttribute } from './entrypoint_DwogkTvv.mjs';
+import { $ as $$Layout } from './Layout_seh4A8MM.mjs';
+import { $ as $$EventCard } from './EventCard_3zJU79gN.mjs';
 import { T as TVTVHDScraper } from './index_-JAiwH9B.mjs';
 
 var __freeze = Object.freeze;
@@ -59,10 +59,10 @@ const $$Events = createComponent(async ($$result, $$props, $$slots) => {
     }
   }
   function formatDate(dateStr) {
-    if (dateStr === "unknown" || !dateStr) return "Fecha desconocida";
+    if (dateStr === "unknown" || !dateStr) return "Unknown date";
     try {
       const date = /* @__PURE__ */ new Date(dateStr + "T00:00:00");
-      return date.toLocaleDateString("es-ES", {
+      return date.toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -79,9 +79,9 @@ const $$Events = createComponent(async ($$result, $$props, $$slots) => {
     eventsByDate[dateKey].push(ev);
   }
   const sortedDates = Object.keys(eventsByDate).sort();
-  return renderTemplate(_a || (_a = __template(["", ` <!-- Video Player Modal --> <div id="event-player-modal" class="fixed inset-0 z-50 hidden"> <!-- Backdrop --> <div class="absolute inset-0 bg-ink/80 backdrop-blur-sm" onclick="closeEventPlayer()"></div> <!-- Modal content --> <div class="relative z-10 flex items-center justify-center h-full p-4"> <div class="w-full max-w-4xl bg-canvas rounded-xl overflow-hidden shadow-modal"> <!-- Header --> <div class="flex items-center justify-between px-5 py-4 border-b border-hairline"> <div class="flex-1 min-w-0"> <h3 id="player-title" class="text-sm font-semibold text-ink truncate">Cargando...</h3> <p id="player-subtitle" class="text-xs text-mute font-mono truncate"></p> </div> <div class="flex items-center gap-2"> <a id="player-full-link" href="#" target="_blank" class="text-xs font-medium text-link no-underline hover:underline hidden sm:inline">
-Pantalla completa
-</a> <button onclick="closeEventPlayer()" class="flex items-center justify-center w-8 h-8 rounded-full border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-colors cursor-pointer" aria-label="Cerrar"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg> </button> </div> </div> <!-- Player container --> <div id="player-container" class="bg-black aspect-video flex items-center justify-center"> <div class="text-center"> <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> </div> <p class="text-white/50 text-sm">Selecciona un stream para reproducir</p> </div> </div> </div> </div> </div> <script src="/hls.min.js"><\/script> <script>
+  return renderTemplate(_a || (_a = __template(["", ` <!-- Video Player Modal --> <div id="event-player-modal" class="fixed inset-0 z-50 hidden"> <!-- Backdrop --> <div class="absolute inset-0 bg-ink/80 backdrop-blur-sm" onclick="closeEventPlayer()"></div> <!-- Modal content --> <div class="relative z-10 flex items-center justify-center h-full p-4"> <div class="w-full max-w-4xl bg-canvas rounded-xl overflow-hidden shadow-modal"> <!-- Header --> <div class="flex items-center justify-between px-5 py-4 border-b border-hairline"> <div class="flex-1 min-w-0"> <h3 id="player-title" class="text-sm font-semibold text-ink truncate">Loading...</h3> <p id="player-subtitle" class="text-xs text-mute font-mono truncate"></p> </div> <div class="flex items-center gap-2"> <a id="player-full-link" href="#" target="_blank" class="text-xs font-medium text-link no-underline hover:underline hidden sm:inline">
+Fullscreen
+</a> <button onclick="closeEventPlayer()" class="flex items-center justify-center w-8 h-8 rounded-full border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-colors cursor-pointer" aria-label="Close"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg> </button> </div> </div> <!-- Player container --> <div id="player-container" class="bg-black aspect-video flex items-center justify-center"> <div class="text-center"> <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> </div> <p class="text-white/50 text-sm">Select a stream to play</p> </div> </div> </div> </div> </div> <script src="/hls.min.js"><\/script> <script>
   // Shared custom player initializer for modal players
   function setupModalPlayer(container, modalContainer) {
     var video = container.querySelector('video');
@@ -200,7 +200,7 @@ Pantalla completa
         video.addEventListener('loadedmetadata', function () { video.play()['catch'](function () {}); });
       } else {
         c.loadingSpinner.classList.add('hidden');
-        c.errorOverlay.querySelector('p').textContent = 'Este navegador no soporta HLS.';
+        c.errorOverlay.querySelector('p').textContent = 'This browser does not support HLS playback.';
         c.errorOverlay.classList.remove('hidden');
       }
     }
@@ -289,11 +289,11 @@ Pantalla completa
       // Show modal with loading state
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-      title.textContent = 'Cargando ' + (channelName || 'stream') + '...';
+      title.textContent = 'Loading ' + (channelName || 'stream') + '...';
       subtitle.textContent = category || '';
       fullLink.style.display = 'none';
 
-      container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Cargando stream...</p></div>';
+      container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Loading stream...</p></div>';
 
       // Destroy previous HLS instance
       if (container._hlsRef) {
@@ -306,8 +306,8 @@ Pantalla completa
         var data = await res.json();
 
         if (!data.hlsUrl) {
-          container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">No hay stream disponible para este canal.</p></div>';
-          title.textContent = channelName || 'Stream no disponible';
+          container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">No stream available for this channel.</p></div>';
+          title.textContent = channelName || 'Stream unavailable';
           return;
         }
 
@@ -337,8 +337,8 @@ Pantalla completa
           '<div class="error-overlay absolute inset-0 flex items-center justify-center z-10 bg-black/60 hidden">',
             '<div class="text-center px-6">',
               '<svg class="w-10 h-10 mx-auto mb-3 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
-              '<p class="text-white/80 text-sm font-medium">Error al cargar el stream</p>',
-              '<button class="retry-btn mt-3 px-4 py-1.5 text-xs font-medium text-white bg-white/15 hover:bg-white/25 rounded-full transition-colors cursor-pointer">Reintentar</button>',
+              '<p class="text-white/80 text-sm font-medium">Error loading stream</p>',
+              '<button class="retry-btn mt-3 px-4 py-1.5 text-xs font-medium text-white bg-white/15 hover:bg-white/25 rounded-full transition-colors cursor-pointer">Retry</button>',
             '</div>',
           '</div>',
           '<div class="controls-bar absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-12 pb-3 px-4 transition-opacity duration-300">',
@@ -354,7 +354,7 @@ Pantalla completa
                 '<svg class="pause-icon w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>',
               '</button>',
               '<span class="live-badge flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-semibold font-mono uppercase tracking-wider text-red-400 bg-red-500/10 rounded-full">',
-                '<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />En Vivo',
+                '<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />Live',
               '</span>',
               '<span class="time-display text-xs font-mono text-white/60 ml-1"><span class="current-time">0:00</span><span class="text-white/30 mx-1">/</span><span class="duration-time">0:00</span></span>',
               '<div class="flex-1" />',
@@ -383,7 +383,7 @@ Pantalla completa
           setupModalPlayer(playerDiv, container);
         }, 50);
       } catch (e) {
-        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Error al cargar el stream.</p></div>';
+        container.innerHTML = '<div class="text-center"><p class="text-white/50 text-sm">Error loading stream.</p></div>';
         title.textContent = channelName || 'Error';
       }
     };
@@ -400,7 +400,7 @@ Pantalla completa
       }
 
       if (container) {
-        container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Selecciona un stream para reproducir</p></div>';
+        container.innerHTML = '<div class="text-center"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><p class="text-white/50 text-sm">Select a stream to play</p></div>';
       }
     };
 
@@ -418,10 +418,10 @@ Pantalla completa
       }
     });
   })();
-<\/script>`])), renderComponent($$result, "Layout", $$Layout, { "title": "Agenda Deportiva — Partidos y Eventos — Fútbol Libre TV", "description": "Consulta la agenda completa de partidos y eventos deportivos. Filtra por fecha y país para encontrar las transmisiones que buscas." }, { "default": async ($$result2) => renderTemplate`  ${maybeRenderHead()}<section class="bg-canvas border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14"> <div class="max-w-2xl"> <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Agenda Deportiva</p> <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-Eventos y partidos.
-</h1> <p class="mt-2 text-body"> ${eventStats.totalEvents} eventos en ${eventStats.uniqueDates.length} fecha${eventStats.uniqueDates.length !== 1 ? "s" : ""}, ${eventStats.uniqueCountries.length} países.
-</p> </div> </div> </section>  <section class="bg-canvas-soft border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4"> <div class="flex flex-wrap gap-6 text-sm"> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Total</span> <span class="font-semibold text-ink">${eventStats.totalEvents}</span> </div> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Fechas</span> <span class="font-semibold text-ink">${eventStats.uniqueDates.length}</span> </div> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Países</span> <span class="font-semibold text-ink">${eventStats.uniqueCountries.length}</span> </div> </div> </div> </section>  <section class="bg-canvas-soft pb-16 sm:pb-20 pt-8"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> ${allEvents.length > 0 ? sortedDates.map((date, dateIndex) => renderTemplate`<div class="mb-12 last:mb-0 animate-fade-in"${addAttribute(`animation-delay: ${dateIndex * 100}ms`, "style")}> <div class="flex items-center gap-4 mb-6"> <h2 class="text-lg font-semibold text-ink"> ${formatDate(date)} </h2> <div class="h-px flex-1 bg-hairline"></div> <span class="text-xs font-mono text-mute"> ${eventsByDate[date].length} evento${eventsByDate[date].length !== 1 ? "s" : ""} </span> </div> <div class="space-y-3 stagger-children"${addAttribute(date, "data-event-date")}> ${eventsByDate[date].map((ev, i) => renderTemplate`${renderComponent($$result2, "EventCard", $$EventCard, { "description": ev.description, "hour": ev.hour, "date": ev.date, "country": ev.country, "embeds": ev.embeds, "index": i })}`)} </div> </div>`) : renderTemplate`<div class="text-center py-20"> <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute"> <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line> </svg> </div> <h3 class="text-lg font-semibold text-ink mb-2">No hay eventos disponibles</h3> <p class="text-sm text-mute">No se encontraron eventos programados. Intenta de nuevo más tarde.</p> </div>`} </div> </section> ` }));
+<\/script>`])), renderComponent($$result, "Layout", $$Layout, { "title": "Sports Schedule — Matches & Events — Fútbol Libre TV", "description": "Browse the complete schedule of sports matches and events. Filter by date and country to find the streams you're looking for." }, { "default": async ($$result2) => renderTemplate`  ${maybeRenderHead()}<section class="bg-canvas border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14"> <div class="max-w-2xl"> <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Sports Schedule</p> <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
+Events & matches.
+</h1> <p class="mt-2 text-body"> ${eventStats.totalEvents} events across ${eventStats.uniqueDates.length} date${eventStats.uniqueDates.length !== 1 ? "s" : ""}, ${eventStats.uniqueCountries.length} countr${eventStats.uniqueCountries.length !== 1 ? "ies" : "y"}.
+</p> </div> </div> </section>  <section class="bg-canvas-soft border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4"> <div class="flex flex-wrap gap-6 text-sm"> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Total</span> <span class="font-semibold text-ink">${eventStats.totalEvents}</span> </div> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Dates</span> <span class="font-semibold text-ink">${eventStats.uniqueDates.length}</span> </div> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Countries</span> <span class="font-semibold text-ink">${eventStats.uniqueCountries.length}</span> </div> </div> </div> </section>  <section class="bg-canvas-soft pb-16 sm:pb-20 pt-8"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> ${allEvents.length > 0 ? sortedDates.map((date, dateIndex) => renderTemplate`<div class="mb-12 last:mb-0 animate-fade-in"${addAttribute(`animation-delay: ${dateIndex * 100}ms`, "style")}> <div class="flex items-center gap-4 mb-6"> <h2 class="text-lg font-semibold text-ink"> ${formatDate(date)} </h2> <div class="h-px flex-1 bg-hairline"></div> <span class="text-xs font-mono text-mute"> ${eventsByDate[date].length} event${eventsByDate[date].length !== 1 ? "s" : ""} </span> </div> <div class="space-y-3 stagger-children"${addAttribute(date, "data-event-date")}> ${eventsByDate[date].map((ev, i) => renderTemplate`${renderComponent($$result2, "EventCard", $$EventCard, { "description": ev.description, "hour": ev.hour, "date": ev.date, "country": ev.country, "embeds": ev.embeds, "index": i })}`)} </div> </div>`) : renderTemplate`<div class="text-center py-20"> <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute"> <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line> </svg> </div> <h3 class="text-lg font-semibold text-ink mb-2">No events available</h3> <p class="text-sm text-mute">No scheduled events found. Try again later.</p> </div>`} </div> </section> ` }));
 }, "/home/dgfrii1800/football/src/pages/events.astro", void 0);
 
 const $$file = "/home/dgfrii1800/football/src/pages/events.astro";
