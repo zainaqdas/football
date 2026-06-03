@@ -6,7 +6,8 @@ export interface Props {
 }
 
 const { hlsUrl, channelName = 'Stream', class: className = '' } = Astro.props;
-const proxiedUrl = hlsUrl ? `/api/hls-proxy?url=${encodeURIComponent(hlsUrl)}` : null;
+const WORKER_PROXY = 'https://hls-proxy.dgfrii1800.workers.dev/';
+const proxiedUrl = hlsUrl ? `${WORKER_PROXY}?url=${encodeURIComponent(hlsUrl)}` : null;
 const playerId = `player-${Math.random().toString(36).slice(2, 9)}`;
 ---
 

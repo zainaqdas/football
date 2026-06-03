@@ -1,0 +1,9 @@
+name = "hls-proxy"
+main = "proxy.js"
+compatibility_date = "2025-12-01"
+
+# No routes defined — uses the default workers.dev subdomain
+# If you want a custom domain, add:
+# routes = [
+#   { pattern = "hls.yourdomain.com/*", custom_domain = true }
+# ]

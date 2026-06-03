@@ -17,5 +17,8 @@
     "astro": "^6.4.3",
     "hls.js": "^1.6.16",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.97.0"
   }
 }
