@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" fill="none">
+  <!-- Football icon -->
+  <g transform="translate(4, 5)">
+    <!-- Outer circle -->
+    <circle cx="20" cy="20" r="18" stroke="#171717" stroke-width="2.5" fill="none"/>
+    <!-- Center line -->
+    <ellipse cx="20" cy="20" rx="9" ry="18" stroke="#171717" stroke-width="1.5" fill="none"/>
+    <!-- Horizontal line -->
+    <ellipse cx="20" cy="20" rx="18" ry="9" stroke="#171717" stroke-width="1.5" fill="none"/>
+    <!-- Pentagon center -->
+    <polygon points="20,12 25.5,16 23,22.5 17,22.5 14.5,16" stroke="#171717" stroke-width="1.2" fill="none"/>
+    <!-- Pentagon connecting lines -->
+    <line x1="20" y1="12" x2="20" y2="3" stroke="#171717" stroke-width="1"/>
+    <line x1="25.5" y1="16" x2="34" y2="12" stroke="#171717" stroke-width="1"/>
+    <line x1="23" y1="22.5" x2="30" y2="30" stroke="#171717" stroke-width="1"/>
+    <line x1="17" y1="22.5" x2="10" y2="30" stroke="#171717" stroke-width="1"/>
+    <line x1="14.5" y1="16" x2="6" y2="12" stroke="#171717" stroke-width="1"/>
+  </g>
+  <!-- Gol HD text -->
+  <text x="52" y="32" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#171717" letter-spacing="-0.5">Gol</text>
+  <text x="88" y="32" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#0070f3" letter-spacing="-0.3">HD</text>
+</svg>
