@@ -1,0 +1,91 @@
+import { c as createComponent } from './astro-component_C8iFBoj9.mjs';
+import 'piccolore';
+import { m as maybeRenderHead, h as addAttribute, k as renderTemplate, o as renderComponent } from './entrypoint_DlJc2ilo.mjs';
+import { $ as $$Layout } from './Layout_D9ZdTp5X.mjs';
+import { $ as $$ChannelCard } from './ChannelCard_jicwFATU.mjs';
+import 'clsx';
+import { T as TVTVHDScraper } from './index_-JAiwH9B.mjs';
+
+const $$NavTabs = createComponent(($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$props, $$slots);
+  Astro2.self = $$NavTabs;
+  const { items, class: className = "" } = Astro2.props;
+  return renderTemplate`${maybeRenderHead()}<div${addAttribute(`flex flex-wrap gap-2 ${className}`, "class")}> ${items.map((item) => renderTemplate`<a${addAttribute(item.href, "href")}${addAttribute(
+    item.active ? "inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-ink bg-canvas rounded-pill-sm card-hairline no-underline transition-all hover:shadow-elevated" : "inline-flex items-center gap-1.5 px-4 py-1.5 text-sm text-body no-underline rounded-pill-sm hover:text-ink hover:bg-canvas transition-all",
+    "class"
+  )}> ${item.label} ${item.count !== void 0 && renderTemplate`<span${addAttribute(`text-xs font-mono ${item.active ? "text-mute" : "text-mute"}`, "class")}> ${item.count} </span>`} </a>`)} </div>`;
+}, "/home/dgfrii1800/football/src/components/NavTabs.astro", void 0);
+
+const $$SearchBar = createComponent(($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$props, $$slots);
+  Astro2.self = $$SearchBar;
+  const { placeholder = "Buscar canales...", value = "", action = "", method = "GET", class: className = "" } = Astro2.props;
+  return renderTemplate`${maybeRenderHead()}<form${addAttribute(action, "action")}${addAttribute(method, "method")}${addAttribute(`relative ${className}`, "class")}> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-mute pointer-events-none"> <circle cx="11" cy="11" r="8"></circle> <path d="m21 21-4.3-4.3"></path> </svg> <input type="text" name="q"${addAttribute(value, "value")}${addAttribute(placeholder, "placeholder")} class="w-full h-10 pl-10 pr-4 bg-canvas border border-hairline rounded-sm text-sm text-ink placeholder:text-mute outline-none focus:border-hairline-strong focus:ring-0 transition-colors" autocomplete="off"> </form>`;
+}, "/home/dgfrii1800/football/src/components/SearchBar.astro", void 0);
+
+const $$Index = createComponent(async ($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$props, $$slots);
+  Astro2.self = $$Index;
+  const scraper = new TVTVHDScraper();
+  const url = new URL(Astro2.request.url);
+  const searchQuery = url.searchParams.get("q") || "";
+  const activeCategory = url.searchParams.get("category") || "";
+  let allChannels, categories, channelStats;
+  try {
+    [allChannels, categories, channelStats] = await Promise.all([
+      scraper.getAllChannels(),
+      scraper.getCategories(),
+      scraper.getChannelStats()
+    ]);
+  } catch (e) {
+    allChannels = [];
+    categories = [];
+    channelStats = { totalActive: 0 };
+  }
+  let filtered = allChannels;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(
+      (ch) => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q)
+    );
+  }
+  const showActive = activeCategory === "active";
+  if (showActive) {
+    filtered = filtered.filter((ch) => ch.isActive);
+  } else if (activeCategory) {
+    const normalized = activeCategory.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    filtered = filtered.filter(
+      (ch) => ch.category.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === normalized
+    );
+  }
+  filtered.sort((a, b) => {
+    if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+  const tabItems = [
+    { label: "Todos", href: "/channels", active: !activeCategory && !searchQuery, count: allChannels.length },
+    { label: "En Vivo", href: "/channels?category=active", active: showActive, count: channelStats.totalActive },
+    ...categories.map((c) => ({
+      label: c,
+      href: `/channels?category=${c.toLowerCase()}`,
+      active: activeCategory.toLowerCase() === c.toLowerCase()
+    }))
+  ];
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Canales en Vivo — Fútbol Libre TV", "description": "Explora todos los canales deportivos disponibles en vivo. Filtra por región, busca tu canal favorito y disfruta de las transmisiones en HD." }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<section class="bg-canvas border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14"> <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6"> <div> <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Canales</p> <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]"> ${searchQuery ? `"${searchQuery}"` : activeCategory ? activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1) : "Todos los canales"} </h1> <p class="mt-1 text-sm text-body"> ${filtered.length} canal${filtered.length !== 1 ? "es" : ""} ${searchQuery && ` encontrados para "${searchQuery}"`} </p> </div> <div class="w-full sm:w-72"> ${renderComponent($$result2, "SearchBar", $$SearchBar, { "placeholder": "Buscar canales...", "value": searchQuery, "action": "/channels", "method": "GET" })} </div> </div> </div> </section> <section class="bg-canvas-soft py-8"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> <div class="overflow-x-auto pb-2 -mb-2"> ${renderComponent($$result2, "NavTabs", $$NavTabs, { "items": tabItems, "class": "flex-nowrap sm:flex-wrap" })} </div> </div> </section> <section class="bg-canvas-soft pb-16 sm:pb-20"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> ${filtered.length > 0 ? renderTemplate`<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children"> ${filtered.map((ch, i) => renderTemplate`${renderComponent($$result2, "ChannelCard", $$ChannelCard, { "name": ch.name, "category": ch.category, "streamUrl": ch.streamUrl, "isActive": ch.isActive, "index": i })}`)} </div>` : renderTemplate`<div class="text-center py-20"> <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute"> <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path> </svg> </div> <h3 class="text-lg font-semibold text-ink mb-2"> ${searchQuery ? `No se encontraron canales para "${searchQuery}"` : "No hay canales en esta categoría"} </h3> <p class="text-sm text-mute mb-6">Intenta con otro término de búsqueda o explora todas las categorías.</p> <a href="/channels" class="inline-flex items-center h-10 px-6 bg-ink text-white text-sm font-medium rounded-pill no-underline hover:bg-ink/90 transition-colors">
+Ver todos los canales
+</a> </div>`} </div> </section> ` })}`;
+}, "/home/dgfrii1800/football/src/pages/channels/index.astro", void 0);
+
+const $$file = "/home/dgfrii1800/football/src/pages/channels/index.astro";
+const $$url = "/channels";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Index,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

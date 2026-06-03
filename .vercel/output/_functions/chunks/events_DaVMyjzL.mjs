@@ -1,209 +1,87 @@
----
-import Layout from '../layouts/Layout.astro';
-import EventCard from '../components/EventCard.astro';
-import { TVTVHDScraper } from '../../scraper/src/index.js';
+import { c as createComponent } from './astro-component_C8iFBoj9.mjs';
+import 'piccolore';
+import { k as renderTemplate, o as renderComponent, m as maybeRenderHead, h as addAttribute } from './entrypoint_DlJc2ilo.mjs';
+import { $ as $$Layout } from './Layout_D9ZdTp5X.mjs';
+import { $ as $$EventCard } from './EventCard_iX20879G.mjs';
+import { T as TVTVHDScraper } from './index_-JAiwH9B.mjs';
 
-const scraper = new TVTVHDScraper();
-
-let allEvents, eventStats, allChannels;
-try {
-  [allEvents, eventStats, allChannels] = await Promise.all([
-    scraper.getAllEvents(),
-    scraper.getEventStats(),
-    scraper.getAllChannels(),
-  ]);
-} catch {
-  allEvents = [];
-  eventStats = { totalEvents: 0, uniqueCountries: [], eventsByCountry: [] };
-  allChannels = [];
-}
-
-function normalize(str) {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-}
-
-// Build a lookup from channel name to stream ID (case-insensitive, accent-insensitive)
-const channelLookup = new Map();
-for (const ch of allChannels) {
-  const streamId = ch.streamUrl?.split('stream=')[1]?.split('&')[0];
-  if (streamId) {
-    channelLookup.set(normalize(ch.name), streamId);
+var __freeze = Object.freeze;
+var __defProp = Object.defineProperty;
+var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(cooked.slice()) }));
+var _a;
+const $$Events = createComponent(async ($$result, $$props, $$slots) => {
+  const scraper = new TVTVHDScraper();
+  let allEvents, eventStats, allChannels;
+  try {
+    [allEvents, eventStats, allChannels] = await Promise.all([
+      scraper.getAllEvents(),
+      scraper.getEventStats(),
+      scraper.getAllChannels()
+    ]);
+  } catch {
+    allEvents = [];
+    eventStats = { totalEvents: 0, uniqueCountries: [], eventsByCountry: [] };
+    allChannels = [];
   }
-}
-
-// Extract streamId from embed decoded params or match by name
-function resolveStreamId(embed) {
-  if (embed.iframe?.decodedParams?.stream) {
-    return embed.iframe.decodedParams.stream;
+  function normalize(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
-  if (embed.iframe?.decodedParams?.raw) {
-    const raw = embed.iframe.decodedParams.raw;
-    const match = raw.match(/stream=([^&\s]+)/);
-    if (match) return match[1];
-  }
-  if (embed.name) {
-    const normalized = normalize(embed.name);
-    if (channelLookup.has(normalized)) return channelLookup.get(normalized);
-    for (const [chName, streamId] of channelLookup) {
-      if (chName.includes(normalized) || normalized.includes(chName)) {
-        return streamId;
-      }
+  const channelLookup = /* @__PURE__ */ new Map();
+  for (const ch of allChannels) {
+    const streamId = ch.streamUrl?.split("stream=")[1]?.split("&")[0];
+    if (streamId) {
+      channelLookup.set(normalize(ch.name), streamId);
     }
   }
-  return null;
-}
-
-// Enrich events with streamIds on embeds
-for (const ev of allEvents) {
-  for (const embed of ev.embeds) {
-    embed.streamId = resolveStreamId(embed);
+  function resolveStreamId(embed) {
+    if (embed.iframe?.decodedParams?.stream) {
+      return embed.iframe.decodedParams.stream;
+    }
+    if (embed.iframe?.decodedParams?.raw) {
+      const raw = embed.iframe.decodedParams.raw;
+      const match = raw.match(/stream=([^&\s]+)/);
+      if (match) return match[1];
+    }
+    if (embed.name) {
+      const normalized = normalize(embed.name);
+      if (channelLookup.has(normalized)) return channelLookup.get(normalized);
+      for (const [chName, streamId] of channelLookup) {
+        if (chName.includes(normalized) || normalized.includes(chName)) {
+          return streamId;
+        }
+      }
+    }
+    return null;
   }
-}
-
-function formatDate(dateStr) {
-  if (dateStr === 'unknown' || !dateStr) return 'Fecha desconocida';
-  try {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return dateStr;
+  for (const ev of allEvents) {
+    for (const embed of ev.embeds) {
+      embed.streamId = resolveStreamId(embed);
+    }
   }
-}
-
-// Group events by date
-const eventsByDate = {};
-for (const ev of allEvents) {
-  const dateKey = ev.date || 'unknown';
-  if (!eventsByDate[dateKey]) eventsByDate[dateKey] = [];
-  eventsByDate[dateKey].push(ev);
-}
-
-const sortedDates = Object.keys(eventsByDate).sort();
----
-
-<Layout title="Agenda Deportiva — Partidos y Eventos — Fútbol Libre TV" description="Consulta la agenda completa de partidos y eventos deportivos. Filtra por fecha y país para encontrar las transmisiones que buscas.">
-  
-  <!-- Header -->
-  <section class="bg-canvas border-b border-hairline">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-      <div class="max-w-2xl">
-        <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Agenda Deportiva</p>
-        <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
-          Eventos y partidos.
-        </h1>
-        <p class="mt-2 text-body">
-          {eventStats.totalEvents} eventos en {eventStats.uniqueDates.length} fecha{eventStats.uniqueDates.length !== 1 ? 's' : ''}, {eventStats.uniqueCountries.length} países.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats strip -->
-  <section class="bg-canvas-soft border-b border-hairline">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex flex-wrap gap-6 text-sm">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-mute uppercase">Total</span>
-          <span class="font-semibold text-ink">{eventStats.totalEvents}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-mute uppercase">Fechas</span>
-          <span class="font-semibold text-ink">{eventStats.uniqueDates.length}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-mute uppercase">Países</span>
-          <span class="font-semibold text-ink">{eventStats.uniqueCountries.length}</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Events by date -->
-  <section class="bg-canvas-soft pb-16 sm:pb-20 pt-8">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      {allEvents.length > 0 ? (
-        sortedDates.map((date, dateIndex) => (
-          <div class="mb-12 last:mb-0 animate-fade-in" style={`animation-delay: ${dateIndex * 100}ms`}>
-            <div class="flex items-center gap-4 mb-6">
-              <h2 class="text-lg font-semibold text-ink">
-                {formatDate(date)}
-              </h2>
-              <div class="h-px flex-1 bg-hairline" />
-              <span class="text-xs font-mono text-mute">
-                {eventsByDate[date].length} evento{eventsByDate[date].length !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <div class="space-y-3 stagger-children" data-event-date={date}>
-              {eventsByDate[date].map((ev, i) => (
-                <EventCard
-                  description={ev.description}
-                  hour={ev.hour}
-                  date={ev.date}
-                  country={ev.country}
-                  embeds={ev.embeds}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        ))
-      ) : (
-        <div class="text-center py-20">
-          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-ink mb-2">No hay eventos disponibles</h3>
-          <p class="text-sm text-mute">No se encontraron eventos programados. Intenta de nuevo más tarde.</p>
-        </div>
-      )}
-    </div>
-  </section>
-</Layout>
-
-<!-- Video Player Modal -->
-<div id="event-player-modal" class="fixed inset-0 z-50 hidden">
-  <!-- Backdrop -->
-  <div class="absolute inset-0 bg-ink/80 backdrop-blur-sm" onclick="closeEventPlayer()"></div>
-  <!-- Modal content -->
-  <div class="relative z-10 flex items-center justify-center h-full p-4">
-    <div class="w-full max-w-4xl bg-canvas rounded-xl overflow-hidden shadow-modal">
-      <!-- Header -->
-      <div class="flex items-center justify-between px-5 py-4 border-b border-hairline">
-        <div class="flex-1 min-w-0">
-          <h3 id="player-title" class="text-sm font-semibold text-ink truncate">Cargando...</h3>
-          <p id="player-subtitle" class="text-xs text-mute font-mono truncate"></p>
-        </div>
-        <div class="flex items-center gap-2">
-          <a id="player-full-link" href="#" target="_blank" class="text-xs font-medium text-link no-underline hover:underline hidden sm:inline">
-            Pantalla completa
-          </a>
-          <button onclick="closeEventPlayer()" class="flex items-center justify-center w-8 h-8 rounded-full border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-colors cursor-pointer" aria-label="Cerrar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-          </button>
-        </div>
-      </div>
-      <!-- Player container -->
-      <div id="player-container" class="bg-black aspect-video flex items-center justify-center">
-        <div class="text-center">
-          <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
-          <p class="text-white/50 text-sm">Selecciona un stream para reproducir</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="/hls.min.js" is:inline></script>
-<script is:inline>
+  function formatDate(dateStr) {
+    if (dateStr === "unknown" || !dateStr) return "Fecha desconocida";
+    try {
+      const date = /* @__PURE__ */ new Date(dateStr + "T00:00:00");
+      return date.toLocaleDateString("es-ES", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    } catch {
+      return dateStr;
+    }
+  }
+  const eventsByDate = {};
+  for (const ev of allEvents) {
+    const dateKey = ev.date || "unknown";
+    if (!eventsByDate[dateKey]) eventsByDate[dateKey] = [];
+    eventsByDate[dateKey].push(ev);
+  }
+  const sortedDates = Object.keys(eventsByDate).sort();
+  return renderTemplate(_a || (_a = __template(["", ` <!-- Video Player Modal --> <div id="event-player-modal" class="fixed inset-0 z-50 hidden"> <!-- Backdrop --> <div class="absolute inset-0 bg-ink/80 backdrop-blur-sm" onclick="closeEventPlayer()"></div> <!-- Modal content --> <div class="relative z-10 flex items-center justify-center h-full p-4"> <div class="w-full max-w-4xl bg-canvas rounded-xl overflow-hidden shadow-modal"> <!-- Header --> <div class="flex items-center justify-between px-5 py-4 border-b border-hairline"> <div class="flex-1 min-w-0"> <h3 id="player-title" class="text-sm font-semibold text-ink truncate">Cargando...</h3> <p id="player-subtitle" class="text-xs text-mute font-mono truncate"></p> </div> <div class="flex items-center gap-2"> <a id="player-full-link" href="#" target="_blank" class="text-xs font-medium text-link no-underline hover:underline hidden sm:inline">
+Pantalla completa
+</a> <button onclick="closeEventPlayer()" class="flex items-center justify-center w-8 h-8 rounded-full border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-colors cursor-pointer" aria-label="Cerrar"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg> </button> </div> </div> <!-- Player container --> <div id="player-container" class="bg-black aspect-video flex items-center justify-center"> <div class="text-center"> <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> </div> <p class="text-white/50 text-sm">Selecciona un stream para reproducir</p> </div> </div> </div> </div> </div> <script src="/hls.min.js"><\/script> <script>
   // Shared custom player initializer for modal players
   function setupModalPlayer(container, modalContainer) {
     var video = container.querySelector('video');
@@ -540,4 +418,22 @@ const sortedDates = Object.keys(eventsByDate).sort();
       }
     });
   })();
-</script>
+<\/script>`])), renderComponent($$result, "Layout", $$Layout, { "title": "Agenda Deportiva — Partidos y Eventos — Fútbol Libre TV", "description": "Consulta la agenda completa de partidos y eventos deportivos. Filtra por fecha y país para encontrar las transmisiones que buscas." }, { "default": async ($$result2) => renderTemplate`  ${maybeRenderHead()}<section class="bg-canvas border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14"> <div class="max-w-2xl"> <p class="text-xs font-mono text-mute uppercase tracking-widest mb-2">Agenda Deportiva</p> <h1 class="text-3xl sm:text-4xl font-semibold text-ink tracking-[-1.28px]">
+Eventos y partidos.
+</h1> <p class="mt-2 text-body"> ${eventStats.totalEvents} eventos en ${eventStats.uniqueDates.length} fecha${eventStats.uniqueDates.length !== 1 ? "s" : ""}, ${eventStats.uniqueCountries.length} países.
+</p> </div> </div> </section>  <section class="bg-canvas-soft border-b border-hairline"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4"> <div class="flex flex-wrap gap-6 text-sm"> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Total</span> <span class="font-semibold text-ink">${eventStats.totalEvents}</span> </div> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Fechas</span> <span class="font-semibold text-ink">${eventStats.uniqueDates.length}</span> </div> <div class="flex items-center gap-2"> <span class="text-xs font-mono text-mute uppercase">Países</span> <span class="font-semibold text-ink">${eventStats.uniqueCountries.length}</span> </div> </div> </div> </section>  <section class="bg-canvas-soft pb-16 sm:pb-20 pt-8"> <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> ${allEvents.length > 0 ? sortedDates.map((date, dateIndex) => renderTemplate`<div class="mb-12 last:mb-0 animate-fade-in"${addAttribute(`animation-delay: ${dateIndex * 100}ms`, "style")}> <div class="flex items-center gap-4 mb-6"> <h2 class="text-lg font-semibold text-ink"> ${formatDate(date)} </h2> <div class="h-px flex-1 bg-hairline"></div> <span class="text-xs font-mono text-mute"> ${eventsByDate[date].length} evento${eventsByDate[date].length !== 1 ? "s" : ""} </span> </div> <div class="space-y-3 stagger-children"${addAttribute(date, "data-event-date")}> ${eventsByDate[date].map((ev, i) => renderTemplate`${renderComponent($$result2, "EventCard", $$EventCard, { "description": ev.description, "hour": ev.hour, "date": ev.date, "country": ev.country, "embeds": ev.embeds, "index": i })}`)} </div> </div>`) : renderTemplate`<div class="text-center py-20"> <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-canvas-soft-2 flex items-center justify-center"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-mute"> <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line> </svg> </div> <h3 class="text-lg font-semibold text-ink mb-2">No hay eventos disponibles</h3> <p class="text-sm text-mute">No se encontraron eventos programados. Intenta de nuevo más tarde.</p> </div>`} </div> </section> ` }));
+}, "/home/dgfrii1800/football/src/pages/events.astro", void 0);
+
+const $$file = "/home/dgfrii1800/football/src/pages/events.astro";
+const $$url = "/events";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Events,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
