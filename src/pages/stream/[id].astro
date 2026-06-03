@@ -23,8 +23,7 @@ try {
   // Handle errors gracefully
 }
 
-// Get the primary HLS stream URL to embed directly
-const hlsUrl = streamInfo?.hlsStreams?.[0] || null;
+const streamId = id;
 
 const title = channel ? `${channel.name} — En Vivo — Fútbol Libre TV` : 'Canal no encontrado — Fútbol Libre TV';
 const description = channel
@@ -53,7 +52,7 @@ const description = channel
             <!-- Main content -->
             <div class="lg:col-span-2">
               <VideoPlayer
-                hlsUrl={hlsUrl}
+                streamId={streamId}
                 channelName={channel.name}
               />
 
@@ -77,13 +76,13 @@ const description = channel
                   </div>
                 </div>
 
-                {streamInfo && hlsUrl && (
+                {streamInfo && (
                   <div class="mt-6 p-4 bg-green-50 border border-green-100 rounded-lg">
                     <div class="flex items-center gap-2 text-sm text-green-800">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
-                      <span class="font-medium">Stream incrustado directamente</span>
+                      <span class="font-medium">Stream incrustado vía iframe</span>
                       <span class="text-green-600 text-xs ml-auto">Reproducción en vivo</span>
                     </div>
                   </div>
@@ -152,7 +151,7 @@ const description = channel
                     <span class="text-mute">Protocolo</span>
                     <span class="font-mono text-xs text-ink">HLS</span>
                   </div>
-                  {hlsUrl && (
+                  {streamId && (
                     <div class="flex justify-between text-sm">
                       <span class="text-mute">Reproducción</span>
                       <span class="font-mono text-xs text-green-600">Incrustada</span>

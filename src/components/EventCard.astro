@@ -5,6 +5,14 @@ export interface EmbedInfo {
   streamId?: string;
 }
 
+function getEmbedUrl(embed) {
+  // Prefer the original embed URL from the source for iframe playback
+  if (embed.iframe?.url) return embed.iframe.url;
+  // Fallback: build from stream ID
+  if (embed.streamId) return 'https://tvtvhd.com/vivo/canales.php?stream=' + encodeURIComponent(embed.streamId);
+  return null;
+}
+
 export interface EventCountry {
   name?: string;
   flag?: { url?: string };
@@ -53,11 +61,13 @@ const delay = index * 80;
         <div class="flex flex-wrap gap-1.5 mt-3">
           {embeds.map((embed) => {
             const href = embed.streamId ? `/stream/${embed.streamId}` : null;
-            return href ? (
+            const embedUrl = getEmbedUrl(embed);
+            return href || embedUrl ? (
               <a
-                href={href}
-                data-stream-id={embed.streamId}
+                href={href || embedUrl}
+                data-stream-id={embed.streamId || ''}
                 data-channel-name={embed.name || ''}
+                data-embed-url={embedUrl || ''}
                 class="inline-flex items-center gap-1 px-2.5 py-1 bg-canvas-soft-2 text-xs font-medium text-body rounded-full no-underline hover:text-ink hover:bg-hairline transition-colors group"
               >
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:text-link transition-colors">
